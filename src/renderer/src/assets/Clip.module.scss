@@ -1,0 +1,252 @@
+.main {
+  -webkit-app-region: drag;
+  background: var(--gray1);
+}
+
+[data-mantine-color-scheme='dark'] .main {
+  background: var(--gray2);
+}
+
+.main {
+  [cmdk-root] {
+    background: var(--gray1);
+    font-family: var(--font-sans);
+    position: relative;
+    padding: 8px 0;
+
+    kbd {
+      font-family: var(--font-sans);
+      background: var(--gray3);
+      color: var(--gray11);
+      height: 20px;
+      width: 20px;
+      border-radius: 4px;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:first-of-type {
+        margin-left: 8px;
+      }
+    }
+  }
+
+  [cmdk-input] {
+    -webkit-app-region: no-drag;
+    font-family: var(--font-sans);
+    border: none;
+    width: 100%;
+    font-size: 15px;
+    padding: 8px 16px;
+    outline: none;
+    background: var(--bg);
+    color: var(--gray12);
+
+    &::placeholder {
+      color: var(--gray9);
+    }
+  }
+
+  .itemRight {
+    margin-left: auto;
+    color: var(--gray11);
+    font-size: 13px;
+    &[data-choose='true'] {
+      color: var(--gray1);
+    }
+  }
+
+  .loader {
+    --loader-color: var(--gray9);
+    border: 0;
+    width: 100%;
+    width: 100%;
+    left: 0;
+    height: 1px;
+    background: var(--gray6);
+    position: relative;
+    overflow: visible;
+    display: block;
+    margin: 8px 0;
+
+    &:after {
+      content: '';
+      width: 50%;
+      height: 1px;
+      position: absolute;
+      background: linear-gradient(90deg, transparent 0%, var(--loader-color) 50%, transparent 100%);
+      top: -1px;
+      opacity: 0;
+      animation-duration: 1.5s;
+      animation-delay: 1s;
+      animation-timing-function: ease;
+      animation-name: loading;
+    }
+  }
+
+  [cmdk-item] {
+    content-visibility: auto;
+    cursor: pointer;
+    width: 97vw;
+    min-height: 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    color: var(--gray12);
+    user-select: none;
+    will-change: background, color;
+    transition: all 150ms ease;
+    transition-property: none;
+
+    &[data-selected='true'] {
+      background: var(--gray4);
+      color: var(--gray12);
+    }
+
+    &[data-choose='true'] {
+      background: var(--blue9);
+      color: var(--gray1);
+    }
+
+    &[data-disabled='true'] {
+      color: var(--gray8);
+      cursor: not-allowed;
+    }
+
+    &:active {
+      transition-property: background;
+      background: var(--gray4);
+    }
+
+    &:first-child {
+      margin-top: 8px;
+    }
+
+    & + [cmdk-item] {
+      margin-top: 4px;
+    }
+
+    svg {
+      // width: 18px;
+      height: 100%;
+    }
+  }
+
+  [cmdk-list] {
+    padding: 0 8px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    transition: 100ms ease;
+    transition-property: height;
+    width: 100%;
+  }
+
+  [cmdk-separator] {
+    height: 1px;
+    width: 100%;
+    background: var(--gray5);
+    margin: 4px 0;
+  }
+
+  *:not([hidden]) + [cmdk-group] {
+    margin-top: 8px;
+  }
+
+  [cmdk-group-heading] {
+    user-select: none;
+    font-size: 12px;
+    color: var(--gray11);
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  [cmdk-empty] {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    white-space: pre-wrap;
+    color: var(--gray11);
+  }
+
+  .btnMore {
+    -webkit-app-region: no-drag;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+  }
+}
+
+@keyframes loading {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(100%);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+    opacity: 0;
+  }
+}
+
+@keyframes border {
+  to {
+    box-shadow: 0 0 0 1px var(--gray6);
+  }
+}
+
+@keyframes showTopShine {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (max-width: 640px) {
+  .main {
+    [cmdk-input] {
+      font-size: 16px;
+    }
+  }
+}

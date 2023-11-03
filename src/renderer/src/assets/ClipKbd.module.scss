@@ -1,0 +1,123 @@
+.kbdmenu {
+  [cmdk-root] {
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    // border: 1px solid var(--gray6);
+    background: var(--gray2);
+    border-radius: 8px;
+  }
+
+  [cmdk-list] {
+    padding: 8px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    transition: 100ms ease;
+    transition-property: height;
+  }
+
+  [cmdk-item] {
+    height: 40px;
+    height: 40px;
+    border-radius: 8px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px;
+    color: var(--gray12);
+    user-select: none;
+    will-change: background, color;
+    transition: all 150ms ease;
+    transition-property: none;
+
+    &[aria-selected='true'] {
+      background: var(--gray5);
+      color: var(--gray12);
+
+      .shortcuts kbd {
+        background: var(--gray7);
+      }
+    }
+
+    &[aria-disabled='true'] {
+      color: var(--gray8);
+      cursor: not-allowed;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .shortcuts {
+      display: flex;
+      margin-left: auto;
+      gap: 2px;
+
+      kbd {
+        font-family: var(--font-sans);
+        background: var(--gray5);
+        color: var(--gray11);
+        height: 20px;
+        width: 20px;
+        border-radius: 4px;
+        padding: 0 4px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:first-of-type {
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+
+  [cmdk-group-heading] {
+    text-transform: capitalize;
+    font-size: 12px;
+    color: var(--gray11);
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-top: 8px;
+    margin-left: 4px;
+  }
+
+  [cmdk-input] {
+    padding: 12px;
+    font-family: var(--font-sans);
+    border: 0;
+    border-top: 1px solid var(--gray6);
+    font-size: 13px;
+    background: transparent;
+    margin-top: auto;
+    width: 100%;
+    outline: 0;
+    border-radius: 0;
+  }
+
+  animation-duration: 0.2s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  transform-origin: var(--radix-popover-content-transform-origin);
+
+  &[data-state='open'] {
+    animation-name: slideIn;
+  }
+
+  &[data-state='closed'] {
+    animation-name: slideOut;
+  }
+
+  [cmdk-empty] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    white-space: pre-wrap;
+    font-size: 14px;
+    color: var(--gray11);
+  }
+}
