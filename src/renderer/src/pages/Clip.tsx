@@ -159,18 +159,18 @@ function Clip(): JSX.Element {
   }, [opened, stopListenShortcut])
 
   const handleShowIndex = useCallback(
-    (event: KeyboardEvent): void => {
+    (event: string): void => {
       if (opened || stopListenShortcut) {
         return
       }
-      if (event.type === 'keydown') {
+      if (event === 'keydown') {
         setShowIndex(true)
       }
-      if (event.type === 'keyup') {
+      if (event === 'keyup') {
         setShowIndex(false)
       }
     },
-    [opened, stopListenShortcut]
+    [opened, stopListenShortcut, setShowIndex]
   )
 
   const handleQuickCopyByIndex = useCallback(
@@ -207,7 +207,7 @@ function Clip(): JSX.Element {
     useHotkeys([Key.Meta + '+' + Key.Enter, Key.Enter], handleCopy, { enableOnFormTags: true })
     useHotkeys(Key.Escape, handleEscape, { enableOnFormTags: true })
     // 按住 Command 显示序号
-    useHotkeys(Key.Meta, handleShowIndex, { keydown: true, keyup: true, enableOnFormTags: true })
+    // useHotkeys(Key.Meta, handleShowIndex, { keydown: true, keyup: true, enableOnFormTags: true })
     // 按住 Command + index 时，复制第一行
     useHotkeys(
       [
@@ -365,7 +365,13 @@ function Clip(): JSX.Element {
 
   return (
     <>
-      <Box h="100vh" w="100%" className={classes.main}>
+      <Box
+        h="100vh"
+        w="100%"
+        className={classes.main}
+        onKeyDown={(): void => handleShowIndex('keydown')}
+        onKeyUp={(): void => handleShowIndex('keyup')}
+      >
         <Command shouldFilter={false}>
           <Command.Input
             spellCheck={false}
