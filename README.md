@@ -3,6 +3,8 @@
     width="128"
     src="./.readme/icon_128x128@2x.png"
   />
+  <br/>
+  开发中...
 </h1>
 
 # [1Memory](https://github.com/ChurchTao/1Memory)
@@ -16,9 +18,9 @@
   />
 </picture>
 
-## 下载
+<!-- ## 下载
 
-从 [release](https://github.com/ChurchTao/Lanaya/releases) 中下载.
+从 [release](https://github.com/ChurchTao/Lanaya/releases) 中下载. -->
 
 ### Mac 用户
 
