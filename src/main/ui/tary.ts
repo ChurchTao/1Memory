@@ -1,6 +1,4 @@
-import { Menu, Tray, app, nativeImage } from 'electron'
-import appIcon from '../../../resources/tary_16x16@2x.png?asset'
-// import copyIcon from '../../../resources/copy.png?asset'
+import { Menu, Tray, app, nativeTheme } from 'electron'
 import i18n from '../../common/i18n/index'
 import { platform } from '@electron-toolkit/utils'
 
@@ -8,9 +6,7 @@ export function createTary(): void {
   if (platform.isMacOS) {
     app.dock.hide()
   }
-  const icon = nativeImage.createFromPath(appIcon)
-  // const icon_clip = nativeImage.createFromPath(copyIcon).resize({ width: 16, height: 16 })
-  const tray = new Tray(icon)
+  const tray: Tray = getTray()
   global.tary = tray
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -26,4 +22,16 @@ export function createTary(): void {
     }
   ])
   tray.setContextMenu(contextMenu)
+}
+
+function getTray(): Tray {
+  if (platform.isMacOS) {
+    return new Tray('resources/taryTemplate.png')
+  } else {
+    if (nativeTheme.shouldUseDarkColors) {
+      return new Tray('resources/tary_16x16@2x.png')
+    } else {
+      return new Tray('resources/taryTemplate.png')
+    }
+  }
 }
