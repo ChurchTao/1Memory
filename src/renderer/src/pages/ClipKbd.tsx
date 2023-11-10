@@ -66,7 +66,7 @@ export default function ClipKbd(): JSX.Element {
     <div className={classes.kbdmenu}>
       <Command>
         <Command.List>
-          <Command.Group heading="快捷键">
+          <Command.Group heading={t('clip_kbd')}>
             {keyMap.map((item) => {
               return (
                 <SubItem key={item.name} shortcut={item.key}>
@@ -76,7 +76,7 @@ export default function ClipKbd(): JSX.Element {
             })}
           </Command.Group>
         </Command.List>
-        <Command.Input autoFocus placeholder="Search for actions..." />
+        <Command.Input autoFocus placeholder={t('clip_kbd_search_placeholder')} />
       </Command>
     </div>
   )

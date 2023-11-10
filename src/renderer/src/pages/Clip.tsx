@@ -9,14 +9,13 @@ import {
   IconTrash,
   IconTxt
 } from '@tabler/icons-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, KeyboardEvent as ReactKeyboardEvent } from 'react'
 import ClipContentItem from '../components/clip/ClipContentItem'
 import ClipBottomBar from '../components/clip/ClipBottomBar'
 import { ClipItemType, ClipItem } from '@renderer/domain/data'
 import { ClipItemDocVO } from '@common/vo'
 import { MimeTypes, SearchModes } from '@common/const'
 import { useTranslation } from 'react-i18next'
-import { useHotkeys } from 'react-hotkeys-hook'
 import { Key } from 'ts-key-enum'
 import {
   ActionIcon,
@@ -73,6 +72,7 @@ function onCopy(id: string, onlyTxt: boolean): void {
 }
 
 function Clip(): JSX.Element {
+  const [alwaysFocusInput, setAlwaysFocusInput] = useState(true)
   const scrollbar = useRef<HTMLDivElement>(null)
   const [pin, setPin] = useState(false)
   const [selectId, setSelectId] = useState('')
@@ -87,6 +87,7 @@ function Clip(): JSX.Element {
   const [opened, { open, close }] = useDisclosure(false)
   const [stopListenShortcut, setStopListenShortcut] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const deleteDialogRef = useRef<HTMLDivElement>(null)
   const [searchMode, setSearchMode] = useState(SearchModes.ALL)
   const [contextMenuOpen, setContextMenuOpen] = useState(false)
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 })
@@ -108,133 +109,57 @@ function Clip(): JSX.Element {
     handleContentChange(_searchTxt, finalMode)
   }
 
-  const handleMoveSelect = useCallback(
-    (event: KeyboardEvent): void => {
-      if (opened || stopListenShortcut) {
-        return
-      }
-      if (selectId === '' && contentList.length > 0) {
-        setSelectIndex(0)
-        setSelectId(contentList[0].id)
-        return
-      }
-      if (event.key === Key.ArrowUp) {
-        if (selectIndex > 0) {
-          setSelectIndex(selectIndex - 1)
-          setSelectId(contentList[selectIndex - 1].id)
-          scrollToCenter(Key.ArrowUp)
-        }
-      }
-      if (event.key === Key.ArrowDown) {
-        if (selectIndex < contentList.length - 1) {
-          setSelectIndex(selectIndex + 1)
-          setSelectId(contentList[selectIndex + 1].id)
-          scrollToCenter(Key.ArrowDown)
-        }
-      }
-    },
-    [contentList, opened, selectId, selectIndex, stopListenShortcut]
-  )
-
-  const handleCopy = useCallback(
-    (event: KeyboardEvent): void => {
-      if (opened || stopListenShortcut) {
-        return
-      }
-      if (event.metaKey || event.ctrlKey) {
-        window.api.clip.handleCopyTxt(selectId)
-      } else {
-        window.api.clip.handleCopy(selectId)
-      }
-    },
-    [opened, selectId, stopListenShortcut]
-  )
-
-  const handleEscape = useCallback((): void => {
-    if (opened || stopListenShortcut) {
-      close()
+  const handleMoveSelect = (event: ReactKeyboardEvent): void => {
+    if (selectId === '' && contentList.length > 0) {
+      setSelectIndex(0)
+      setSelectId(contentList[0].id)
       return
     }
+    if (event.key === Key.ArrowUp) {
+      if (selectIndex > 0) {
+        setSelectIndex(selectIndex - 1)
+        setSelectId(contentList[selectIndex - 1].id)
+        scrollToCenter(Key.ArrowUp)
+      }
+    }
+    if (event.key === Key.ArrowDown) {
+      if (selectIndex < contentList.length - 1) {
+        setSelectIndex(selectIndex + 1)
+        setSelectId(contentList[selectIndex + 1].id)
+        scrollToCenter(Key.ArrowDown)
+      }
+    }
+  }
+
+  const handleCopy = (event: ReactKeyboardEvent): void => {
+    if (event.metaKey || event.ctrlKey) {
+      window.api.clip.handleCopyTxt(selectId)
+    } else {
+      window.api.clip.handleCopy(selectId)
+    }
+  }
+
+  const handleEscape = (): void => {
     window.api.win.closeWin('clip')
-  }, [opened, stopListenShortcut])
+  }
 
-  const handleShowIndex = useCallback(
-    (event: string): void => {
-      if (opened || stopListenShortcut) {
-        return
+  const handleQuickCopyByIndex = (event: ReactKeyboardEvent): void => {
+    const index = parseInt(event.key)
+    if (contentList.length > index - 1) {
+      if (event.shiftKey) {
+        window.api.clip.handleCopyTxt(contentList[index - 1].id)
+      } else {
+        window.api.clip.handleCopy(contentList[index - 1].id)
       }
-      if (event === 'keydown') {
-        setShowIndex(true)
-      }
-      if (event === 'keyup') {
-        setShowIndex(false)
-      }
-    },
-    [opened, stopListenShortcut, setShowIndex]
-  )
-
-  const handleQuickCopyByIndex = useCallback(
-    (event: KeyboardEvent): void => {
-      if (opened || stopListenShortcut) {
-        return
-      }
-      const index = parseInt(event.key)
-      if (contentList.length > index - 1) {
-        if (event.shiftKey) {
-          window.api.clip.handleCopyTxt(contentList[index - 1].id)
-        } else {
-          window.api.clip.handleCopy(contentList[index - 1].id)
-        }
-      }
-    },
-    [contentList, opened, stopListenShortcut]
-  )
-
-  const handleShowDeleteDialog = useCallback((): void => {
-    if (opened || stopListenShortcut) {
-      return
     }
-    console.log('handleShowDeleteDialog', selectId)
+  }
+
+  const handleShowDeleteDialog = (): void => {
     if (selectId !== '') {
-      open()
+      setAlwaysFocusInput(false)
       setShowIndex(false)
+      open()
     }
-  }, [opened, selectId, stopListenShortcut])
-
-  function initHotkeys(): void {
-    // 上下箭头选择
-    useHotkeys([Key.ArrowUp, Key.ArrowDown], handleMoveSelect, { enableOnFormTags: true })
-    useHotkeys([Key.Meta + '+' + Key.Enter, Key.Enter], handleCopy, { enableOnFormTags: true })
-    useHotkeys(Key.Escape, handleEscape, { enableOnFormTags: true })
-    // 按住 Command 显示序号
-    // useHotkeys(Key.Meta, handleShowIndex, { keydown: true, keyup: true, enableOnFormTags: true })
-    // 按住 Command + index 时，复制第一行
-    useHotkeys(
-      [
-        Key.Meta + '+1',
-        Key.Meta + '+2',
-        Key.Meta + '+3',
-        Key.Meta + '+4',
-        Key.Meta + '+5',
-        Key.Meta + '+6',
-        Key.Meta + '+7',
-        Key.Meta + '+8',
-        Key.Meta + '+9',
-        Key.Meta + '+' + Key.Shift + '+1',
-        Key.Meta + '+' + Key.Shift + '+2',
-        Key.Meta + '+' + Key.Shift + '+3',
-        Key.Meta + '+' + Key.Shift + '+4',
-        Key.Meta + '+' + Key.Shift + '+5',
-        Key.Meta + '+' + Key.Shift + '+6',
-        Key.Meta + '+' + Key.Shift + '+7',
-        Key.Meta + '+' + Key.Shift + '+8',
-        Key.Meta + '+' + Key.Shift + '+9'
-      ],
-      handleQuickCopyByIndex,
-      { enableOnFormTags: true }
-    )
-    // Command + backSpace 删除选中行
-    useHotkeys(Key.Meta + '+' + Key.Backspace, handleShowDeleteDialog, { enableOnFormTags: true })
   }
 
   function scrollToCenter(key: Key): void {
@@ -265,22 +190,19 @@ function Clip(): JSX.Element {
     }
   }
 
-  const handlePin = useCallback((): void => {
+  const handlePin = (): void => {
     setPin(!pin)
     window.api.win.pin('clip', !pin)
-    // scrollbars.current?.scrollTop(0)
-  }, [pin])
+  }
 
   const handleClickItem = (id: string, index: number): void => {
     setSelectId(id)
     setSelectIndex(index)
     console.log('handleClickItem', id)
   }
-  function handleDoubleClickItem(item: ClipItem): void {
-    console.log('copy', item)
+  const handleDoubleClickItem = (item: ClipItem): void => {
     window.api.clip.handleCopy(item.id)
   }
-
   const handleContentChange = (txt: string | null, _searchMode?: string): void => {
     if (txt === null) {
       txt = searchTxt
@@ -330,7 +252,7 @@ function Clip(): JSX.Element {
     setInit(true)
   }
 
-  function handleDeleteById(): void {
+  const handleDeleteById = (): void => {
     if (selectId !== '') {
       window.api.clip.deleteById(selectId)
       const _selectIndex = selectIndex
@@ -344,7 +266,7 @@ function Clip(): JSX.Element {
         setSelectIndex(0)
         setSelectId('')
       }
-      close()
+      handleDeleteDialogClose()
     }
   }
 
@@ -354,8 +276,6 @@ function Clip(): JSX.Element {
     setContextMenuOpen(true)
   }
 
-  initHotkeys()
-
   useEffect(() => {
     if (!init) {
       handleInit()
@@ -363,22 +283,74 @@ function Clip(): JSX.Element {
     return () => {}
   }, [init, setInit, setShowIndex])
 
+  const handleOnKeyDown = (e: ReactKeyboardEvent): void => {
+    if (opened || stopListenShortcut) {
+      return
+    }
+    // 按住 Command 显示序号
+    if (e.key === Key.Meta || e.key === Key.Control) {
+      setShowIndex(true)
+    }
+    // Escape 关闭窗口
+    if (e.key === Key.Escape) {
+      handleEscape()
+    }
+    // Command + backSpace 删除选中行
+    if (e.key === Key.Backspace && (e.metaKey || e.ctrlKey)) {
+      handleShowDeleteDialog()
+    }
+    if (e.key === Key.ArrowUp || e.key === Key.ArrowDown) {
+      handleMoveSelect(e)
+    }
+    if (e.key === Key.Enter) {
+      handleCopy(e)
+    }
+    // 数字快捷键复制
+    if (e.key >= '1' && e.key <= '9' && (e.metaKey || e.ctrlKey)) {
+      handleQuickCopyByIndex(e)
+    }
+  }
+
+  const handleOnKeyUp = (e: ReactKeyboardEvent): void => {
+    if (e.key === Key.Meta || e.key === Key.Control) {
+      setShowIndex(false)
+    }
+  }
+
+  const handleDeleteDialogClose = (): void => {
+    setAlwaysFocusInput(true)
+    close()
+    inputRef.current?.focus()
+  }
+
+  const handleKbdMenuClose = (): void => {
+    setStopListenShortcut(false)
+    setAlwaysFocusInput(true)
+    inputRef.current?.focus()
+  }
+
+  const handleKdbMenuOpen = (): void => {
+    setStopListenShortcut(true)
+    setAlwaysFocusInput(false)
+  }
+
   return (
     <>
-      <Box
-        h="100vh"
-        w="100%"
-        className={classes.main}
-        onKeyDown={(): void => handleShowIndex('keydown')}
-        onKeyUp={(): void => handleShowIndex('keyup')}
-      >
+      <Box h="100vh" w="100%" className={classes.main}>
         <Command shouldFilter={false}>
           <Command.Input
             spellCheck={false}
             ref={inputRef}
             autoFocus
+            onBlur={(): void => {
+              if (alwaysFocusInput) {
+                inputRef.current?.focus()
+              }
+            }}
             placeholder={t('search_placeholder')}
             onValueChange={(e): void => handleContentChange(e)}
+            onKeyDown={(e): void => handleOnKeyDown(e)}
+            onKeyUp={(e): void => handleOnKeyUp(e)}
           />
           <Collapse in={inputTipShow} animateOpacity>
             <Code ml={20} color="red.9" c="white">
@@ -398,50 +370,50 @@ function Clip(): JSX.Element {
               </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Label>筛选</Menu.Label>
+              <Menu.Label>{t('clip_search_mode_menu_title')}</Menu.Label>
               <Menu.Item
                 color={searchMode === SearchModes.TXT ? 'blue' : ''}
                 onClick={(): void => handleChangeSearchMode(SearchModes.TXT)}
                 leftSection={<IconTxt style={{ width: rem(14), height: rem(14) }} />}
               >
-                文本
+                {t('clip_search_mode_txt')}
               </Menu.Item>
               <Menu.Item
                 color={searchMode === SearchModes.IMG ? 'blue' : ''}
                 onClick={(): void => handleChangeSearchMode(SearchModes.IMG)}
                 leftSection={<IconPhoto style={{ width: rem(14), height: rem(14) }} />}
               >
-                图片
+                {t('clip_search_mode_image')}
               </Menu.Item>
               <Menu.Item
                 color={searchMode === SearchModes.RTF ? 'blue' : ''}
                 onClick={(): void => handleChangeSearchMode(SearchModes.RTF)}
                 leftSection={<IconTextPlus style={{ width: rem(14), height: rem(14) }} />}
               >
-                富文本
+                {t('clip_search_mode_rich_text')}
               </Menu.Item>
               <Menu.Item
                 color={searchMode === SearchModes.HTML ? 'blue' : ''}
                 onClick={(): void => handleChangeSearchMode(SearchModes.HTML)}
                 leftSection={<IconHtml style={{ width: rem(14), height: rem(14) }} />}
               >
-                HTML
+                {t('clip_search_mode_html')}
               </Menu.Item>
               <Menu.Divider />
-              <Menu.Label>操作</Menu.Label>
+              <Menu.Label>{t('clip_search_mode_menu_title2')}</Menu.Label>
               <Menu.Item
                 color={searchMode === SearchModes.REGEXP ? 'blue' : ''}
                 onClick={(): void => handleChangeSearchMode(SearchModes.REGEXP)}
                 leftSection={<IconRegex style={{ width: rem(14), height: rem(14) }} />}
               >
-                正则表达式搜索
+                {t('clip_search_mode_regexp')}
               </Menu.Item>
               <Menu.Item
                 color={pin ? 'blue' : ''}
                 onClick={handlePin}
                 leftSection={<IconPin style={{ width: rem(14), height: rem(14) }} />}
               >
-                窗口置顶
+                {t('clip_top_window')}
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
@@ -453,7 +425,7 @@ function Clip(): JSX.Element {
             scrollHideDelay={200}
           >
             <Command.List>
-              <Command.Empty>No results found.</Command.Empty>
+              <Command.Empty>{t('clip_search_empty')}</Command.Empty>
               {contentList.length > 0 && (
                 <Command.Group heading="Records">
                   {contentList.map((item: ClipItem, index: number) => {
@@ -479,7 +451,6 @@ function Clip(): JSX.Element {
         </Command>
         <Menu
           shadow="md"
-          width={150}
           opened={contextMenuOpen}
           onChange={setContextMenuOpen}
           position="bottom-start"
@@ -492,47 +463,46 @@ function Clip(): JSX.Element {
               onClick={(): void => onCopy(selectId, false)}
               leftSection={<IconCopy style={{ width: rem(14), height: rem(14) }} />}
             >
-              Only Copy
+              {t('clip_item_context_menu_copy')}
             </Menu.Item>
             <Menu.Item
               onClick={(): void => onCopy(selectId, true)}
               leftSection={<IconTxt style={{ width: rem(14), height: rem(14) }} />}
             >
-              Copy Text
+              {t('clip_item_context_menu_copy_text')}
             </Menu.Item>
             <Menu.Item
               onClick={handleDeleteById}
               leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
               color="red"
             >
-              Delete
+              {t('clip_item_delete_btn')}
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
         <ClipBottomBar
           size={contentList.length}
-          onKbdMenuClose={(): void => {
-            setStopListenShortcut(false)
-            inputRef.current?.focus()
-          }}
-          onKbdMenuOpen={(): void => setStopListenShortcut(true)}
+          onKbdMenuClose={handleKbdMenuClose}
+          onKbdMenuOpen={handleKdbMenuOpen}
         />
       </Box>
       <Modal
+        ref={deleteDialogRef}
         size={'sm'}
+        withCloseButton={false}
         opened={opened}
-        onClose={close}
-        closeOnEscape={false}
+        onClose={handleDeleteDialogClose}
+        closeOnEscape
         centered
         radius={'md'}
         title={t('clip_item_delete_confirm')}
       >
         <Group justify="right">
-          <Button data-autofocus onClick={handleDeleteById} color={'red'}>
-            Delete
+          <Button data-autofocus onClick={handleDeleteById} color={'red'} variant="subtle">
+            {t('clip_item_delete_btn')}
           </Button>
-          <Button onClick={close} color={'gray'}>
-            Cancel
+          <Button onClick={handleDeleteDialogClose} color={'gray'} variant="subtle">
+            {t('clip_item_cancel_btn')}
           </Button>
         </Group>
       </Modal>
