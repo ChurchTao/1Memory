@@ -76,7 +76,7 @@ export default function ClipKbd(): JSX.Element {
             })}
           </Command.Group>
         </Command.List>
-        <Command.Input autoFocus placeholder={t('clip_kbd_search_placeholder')} />
+        <Command.Input data-autofocus autoFocus placeholder={t('clip_kbd_search_placeholder')} />
       </Command>
     </div>
   )

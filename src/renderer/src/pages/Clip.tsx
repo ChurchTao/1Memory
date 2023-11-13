@@ -91,6 +91,7 @@ function Clip(): JSX.Element {
   const [searchMode, setSearchMode] = useState(SearchModes.ALL)
   const [contextMenuOpen, setContextMenuOpen] = useState(false)
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 })
+  const [kbdOpened, setKbdOpened] = useState(false)
 
   const handleChangeSearchMode = (mode: string): void => {
     let finalMode = SearchModes.ALL
@@ -280,8 +281,7 @@ function Clip(): JSX.Element {
     if (!init) {
       handleInit()
     }
-    return () => {}
-  }, [init, setInit, setShowIndex])
+  }, [])
 
   const handleOnKeyDown = (e: ReactKeyboardEvent): void => {
     if (opened || stopListenShortcut) {
@@ -309,6 +309,9 @@ function Clip(): JSX.Element {
     if (e.key >= '1' && e.key <= '9' && (e.metaKey || e.ctrlKey)) {
       handleQuickCopyByIndex(e)
     }
+    if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      handleKdbMenuOpen()
+    }
   }
 
   const handleOnKeyUp = (e: ReactKeyboardEvent): void => {
@@ -326,12 +329,15 @@ function Clip(): JSX.Element {
   const handleKbdMenuClose = (): void => {
     setStopListenShortcut(false)
     setAlwaysFocusInput(true)
+    setKbdOpened(false)
     inputRef.current?.focus()
   }
 
   const handleKdbMenuOpen = (): void => {
     setStopListenShortcut(true)
     setAlwaysFocusInput(false)
+    setShowIndex(false)
+    setKbdOpened(true)
   }
 
   return (
@@ -484,6 +490,7 @@ function Clip(): JSX.Element {
           size={contentList.length}
           onKbdMenuClose={handleKbdMenuClose}
           onKbdMenuOpen={handleKdbMenuOpen}
+          kbdOpened={kbdOpened}
         />
       </Box>
       <Modal
