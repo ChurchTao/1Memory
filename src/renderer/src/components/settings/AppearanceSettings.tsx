@@ -1,19 +1,26 @@
 import React, { useState } from 'react'
-import {
-  Group,
-  Text,
-  MantineColorScheme,
-  Select,
-  Stack,
-  useMantineColorScheme
-} from '@mantine/core'
+import { Group, Text, Select, Stack, useMantineColorScheme } from '@mantine/core'
 
 const AppearanceSettings: React.FC = () => {
   const [theme, setTheme] = useState('auto')
   const { setColorScheme } = useMantineColorScheme()
-  const handleThemeChange = (event: MantineColorScheme): void => {
+  const handleThemeChange = (event: string | null): void => {
+    if (!event) {
+      setColorScheme('auto')
+      window.api.win.datkModeSet('system')
+      return
+    }
     setTheme(event)
-    setColorScheme(event)
+    if (event === 'auto') {
+      setColorScheme('auto')
+      window.api.win.datkModeSet('system')
+    } else if (event === 'light') {
+      setColorScheme(event)
+      window.api.win.datkModeSet('light')
+    } else if (event === 'dark') {
+      setColorScheme(event)
+      window.api.win.datkModeSet('dark')
+    }
   }
   return (
     <Stack>

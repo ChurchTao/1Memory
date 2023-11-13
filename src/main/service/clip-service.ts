@@ -12,7 +12,6 @@ export async function handleCopy(id: string): Promise<void> {
   const doc = await getById(id)
   moveToTopByDoc(doc)
   const docDo: ClipItemDocDo = await convertDetail(doc)
-  console.log('on copy doc=', docDo)
   // 如果是图片
   if (doc.types.includes(MimeTypes.IMG)) {
     const _img = docDo.getImg()

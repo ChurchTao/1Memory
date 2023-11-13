@@ -129,15 +129,12 @@ export default class ClipItemDocDo {
     // 2. 对比 types 长度是否相等 && types内容是否相等
     // 3. 对比 _attachments 中的内容是否相等
     if (this.txt.length !== clipItemDocDo.txt.length || this.txt !== clipItemDocDo.txt) {
-      console.log('txt is not eq')
       return false
     }
     if (!compareTypes(this.types, clipItemDocDo.types)) {
-      console.log('types is not eq')
       return false
     }
     if (!compareAttachments(this._attachments, clipItemDocDo._attachments)) {
-      console.log('_attachments is not eq')
       return false
     }
     return true
@@ -160,11 +157,9 @@ function compareAttachments(_attachments: Attachments, _attachments1: Attachment
   for (const key in _attachments) {
     if (key == ClipAttachMentTypes.IMG) {
       if (_attachments[key].data.length !== _attachments1[key].data.length) {
-        console.log('compareAttachments img: buffer length is not eq', key)
         return false
       }
       if (Buffer.compare(_attachments[key].data, _attachments1[key].data) !== 0) {
-        console.log('compareAttachments img: is not eq', key)
         return false
       }
     }

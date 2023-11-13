@@ -32,7 +32,6 @@ export default function ShortcutInput(props: ShortcutInputProps): JSX.Element {
       if (names.length === 0) {
         return
       }
-      console.log(codes)
       setShortcut(getShortCutShow(codes))
       onChange(names.join('+'))
     })

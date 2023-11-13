@@ -10,6 +10,7 @@ declare global {
         closeWin(name: string): void
         pin(name: string, pin: boolean): void
         setSize(name: string, width: number, height: number): void
+        datkModeSet(darkMode: string): void
       }
       clip: {
         getById(id: string): Promise<ClipItemDocVO>

@@ -7,11 +7,13 @@ import { ControllerApi, EventTypes } from '../common/const'
 const api = {
   platform: process.platform,
   win: {
-    openWin: (name: string): void => ipcRenderer.send('openWin', name),
-    closeWin: (name: string): void => ipcRenderer.send('closeWin', name),
-    pin: (name: string, pin: boolean): void => ipcRenderer.send('pin', name, pin),
+    openWin: (name: string): void => ipcRenderer.send(ControllerApi.WIN_OPEN, name),
+    closeWin: (name: string): void => ipcRenderer.send(ControllerApi.WIN_CLOSE, name),
+    pin: (name: string, pin: boolean): void =>
+      ipcRenderer.send(ControllerApi.WIN_SET_PIN, name, pin),
     setSize: (name: string, width: number, height: number): void =>
-      ipcRenderer.send(ControllerApi.WIN_SET_SIZE, name, width, height)
+      ipcRenderer.send(ControllerApi.WIN_SET_SIZE, name, width, height),
+    datkModeSet: (darkMode: string): void => ipcRenderer.send(ControllerApi.DARK_MODE_SET, darkMode)
   },
   clip: {
     getById: (id: string): Promise<ClipItemDocVO> =>

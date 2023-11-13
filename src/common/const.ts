@@ -36,7 +36,9 @@ export enum ControllerApi {
   CLIP_HANDLE_COPY_TXT = 'clip::handleCopyTxt',
   WIN_SET_SIZE = 'win::setSize',
   WIN_SET_PIN = 'win::setPin',
-  WIN_CLOSE = 'win::close'
+  WIN_CLOSE = 'win::close',
+  WIN_OPEN = 'win::open',
+  DARK_MODE_SET = 'darkMode::set'
 }
 
 export const DB_CLIP_ITEM_PREFIX = 'ci_'

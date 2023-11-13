@@ -1,9 +1,6 @@
 import { WindowUtil } from '../utils/window-util'
 
 export async function closeWin(win: string): Promise<void> {
-  if (win === 'kbd') {
-    global.kbd_win?.hide()
-  }
   if (win === 'clip' && global.main_win?.isVisible()) {
     WindowUtil.hideClipWindowAll()
   }
