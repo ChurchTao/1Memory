@@ -1,5 +1,5 @@
 import { globalShortcut } from 'electron'
-import { WindowUtil } from '../utils/windowUtil'
+import { WindowUtil } from '../utils/window-util'
 
 export function registerShortcut(): void {
   const ret = globalShortcut.register('Option+Space', () => {

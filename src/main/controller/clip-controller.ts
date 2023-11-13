@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
-import { getById, findByTxtLike, deleteById, getAttachmentByIdAndType } from '../dao/clipDao'
-import { handleCopy, handleCopyTxt } from '../service/clipService'
+import { getById, findByTxtLike, deleteById, getAttachmentByIdAndType } from '../dao/clip-dao'
+import { handleCopy, handleCopyTxt } from '../service/clip-service'
 import { ClipAttachMentTypes, ControllerApi, MimeTypes } from '../../common/const'
 import { ClipItemDocVO } from '../../common/vo'
 

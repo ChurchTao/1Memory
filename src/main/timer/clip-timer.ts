@@ -1,7 +1,7 @@
 import { clipboard } from 'electron'
-import { saveClipItem } from '../dao/clipDao'
-import { getLatestDetail } from '../service/clipService'
-import ClipItemDocDo from '../do/clipItemDocDo'
+import { saveClipItem } from '../dao/clip-dao'
+import { getLatestDetail } from '../service/clip-service'
+import ClipItemDocDo from '../do/clipItem-doc-do'
 import { v4 as uuid4 } from 'uuid'
 import { EventTypes, MimeTypes } from '../../common/const'
 

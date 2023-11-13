@@ -1,5 +1,5 @@
 import { EventTypes, MimeTypes } from '../../common/const'
-import ClipItemDocDo from '../do/clipItemDocDo'
+import ClipItemDocDo from '../do/clipItem-doc-do'
 // import { DB_CLIP_ITEM_PREFIX } from '../../common/const'
 /*
 selector Defines a selector to filter the results. Required.

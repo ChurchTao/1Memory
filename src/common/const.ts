@@ -34,7 +34,9 @@ export enum ControllerApi {
   CLIP_DELETE_BY_ID = 'clip::deleteById',
   CLIP_HANDLE_COPY = 'clip::handleCopy',
   CLIP_HANDLE_COPY_TXT = 'clip::handleCopyTxt',
-  WIN_SET_SIZE = 'win::setSize'
+  WIN_SET_SIZE = 'win::setSize',
+  WIN_SET_PIN = 'win::setPin',
+  WIN_CLOSE = 'win::close'
 }
 
 export const DB_CLIP_ITEM_PREFIX = 'ci_'

@@ -1,10 +1,10 @@
 import { ClipAttachMentTypes, EventTypes, MimeTypes } from '../../common/const'
-import { getById, getAttachmentByIdAndType, moveToTopByDoc, findByTxtLike } from '../dao/clipDao'
+import { getById, getAttachmentByIdAndType, moveToTopByDoc, findByTxtLike } from '../dao/clip-dao'
 import { clipboard, nativeImage } from 'electron'
-import { keyUtil } from '../utils/keyUtil'
-import ClipItemDocDo from '../do/clipItemDocDo'
-import ClipTimer from '../timer/clipTimer'
-import { WindowUtil } from '../utils/windowUtil'
+import { keyUtil } from '../utils/key-util'
+import ClipItemDocDo from '../do/clipItem-doc-do'
+import ClipTimer from '../timer/clip-timer'
+import { WindowUtil } from '../utils/window-util'
 
 // 把数据写入剪贴板
 export async function handleCopy(id: string): Promise<void> {

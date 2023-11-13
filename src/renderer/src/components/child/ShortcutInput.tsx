@@ -7,7 +7,7 @@ import { CloseButton, Input } from '@mantine/core'
 import { IconKeyboard } from '@tabler/icons-react'
 import hotkeys from 'hotkeys-js'
 import { useRef, useState } from 'react'
-import { specialKeyCodeNameMap, modifierKeyCodeMap, FuncKeyShow } from '@common/keyMap'
+import { specialKeyCodeNameMap, modifierKeyCodeMap, FuncKeyShow } from '@common/key-map'
 import { Key } from 'ts-key-enum'
 
 interface ShortcutInputProps {
