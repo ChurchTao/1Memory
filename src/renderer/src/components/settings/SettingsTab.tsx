@@ -1,6 +1,6 @@
 import { Center, Flex, Text } from '@mantine/core'
 import React from 'react'
-import classes from '../../assets/SettingsTab.module.css'
+import classes from '../../assets/SettingsTab.module.scss'
 
 interface SettingsTabProps {
   title: string

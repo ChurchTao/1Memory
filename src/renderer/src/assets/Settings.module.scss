@@ -1,0 +1,12 @@
+.left {
+  background: var(--mantine-color-blk-0);
+}
+
+[data-mantine-color-scheme='dark'] .left {
+  background: var(--mantine-color-blk-9);
+}
+
+.label {
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-sm);
+}

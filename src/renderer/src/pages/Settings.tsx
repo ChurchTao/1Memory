@@ -6,16 +6,16 @@ import SettingsTab from '../components/settings/SettingsTab'
 import {
   IconSettings,
   IconClipboard,
-  IconCat,
-  IconCode,
-  IconFingerprint,
-  IconShirt
+  IconCode
+  // IconFingerprint,
+  // IconShirt,
 } from '@tabler/icons-react'
-import { Box, Divider, Flex, Stack } from '@mantine/core'
+import { Box, Divider, Flex, Stack, Image } from '@mantine/core'
 import AppearanceSettings from '@renderer/components/settings/AppearanceSettings'
 import SecuritySettings from '@renderer/components/settings/SecuritySettings'
 import DeveloperSettings from '@renderer/components/settings/DeveloperSettings'
-import classes from '@renderer/assets/Settings.module.css'
+import classes from '@renderer/assets/Settings.module.scss'
+import aboutLogo from '@renderer/assets/image/about_logo32x32@2x.png'
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general')
@@ -36,23 +36,23 @@ const Settings: React.FC = () => {
               isActive={activeTab === 'general'}
               onClick={(): void => handleTabClick('general')}
             />
-            <SettingsTab
+            {/* <SettingsTab
               title="外观"
               color="pink"
               icon={<IconShirt size={20} />}
               isActive={activeTab === 'appearance'}
               onClick={(): void => handleTabClick('appearance')}
-            />
-            <SettingsTab
+            /> */}
+            {/* <SettingsTab
               title="安全"
               color="yellow"
               icon={<IconFingerprint size={20} />}
               isActive={activeTab === 'security'}
               onClick={(): void => handleTabClick('security')}
-            />
+            /> */}
             <SettingsTab
               title="剪贴板"
-              color="cyan"
+              color="pink"
               icon={<IconClipboard size={20} />}
               isActive={activeTab === 'clipboard'}
               onClick={(): void => handleTabClick('clipboard')}
@@ -60,15 +60,15 @@ const Settings: React.FC = () => {
             <Divider my="sm" />
             <SettingsTab
               title="开发者"
-              color="teal"
+              color="yellow"
               icon={<IconCode size={20} />}
               isActive={activeTab === 'developer'}
               onClick={(): void => handleTabClick('developer')}
             />
             <SettingsTab
               title="关于"
-              color="blue"
-              icon={<IconCat size={20} />}
+              color="indigo"
+              icon={<Image src={aboutLogo} w={28} h={28} />}
               isActive={activeTab === 'about'}
               onClick={(): void => handleTabClick('about')}
             />

@@ -1,0 +1,27 @@
+.item {
+  background: transparent;
+}
+
+.item:hover {
+  background: var(--mantine-color-blue-light-hover);
+}
+
+.item_active {
+  background: var(--mantine-color-blue-6);
+}
+
+.text {
+  color: var(--mantine-color-black);
+}
+
+.text_active {
+  color: var(--mantine-color-white);
+}
+
+[data-mantine-color-scheme='dark'] .item_active {
+  background: var(--mantine-color-blue-8);
+}
+
+[data-mantine-color-scheme='dark'] .text {
+  color: var(--mantine-color-white);
+}

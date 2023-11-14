@@ -200,49 +200,6 @@
   }
 }
 
-@keyframes shine {
-  to {
-    background-position: 200% center;
-    opacity: 0;
-  }
-}
-
-@keyframes border {
-  to {
-    box-shadow: 0 0 0 1px var(--gray6);
-  }
-}
-
-@keyframes showTopShine {
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slideOut {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-}
-
 @media (max-width: 640px) {
   .main {
     [cmdk-input] {
