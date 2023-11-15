@@ -1,69 +1,14 @@
-import { app, shell, BrowserWindow } from 'electron'
-import { join } from 'path'
-import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { env } from './utils/env'
+import { app, BrowserWindow } from 'electron'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
+import * as clipWin from '../main/ui/clip'
 import * as settingsWin from '../main/ui/settings'
 import ClipTimer from './timer/clip-timer'
 import DB from './db/index'
 import { initController } from './controller'
 import { createTary } from './ui/tary'
 import { registerShortcut, unregisterShortcut } from './core/shortcut'
-import { EventTypes } from '../common/const'
 import { initSettings } from './service/settings-service'
 import { init as initI18N } from './core/i18n'
-
-function createWindow(): void {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 640,
-    height: 500,
-    resizable: false,
-    show: false,
-    skipTaskbar: false,
-    frame: false,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
-      devTools: is.dev
-    }
-  })
-
-  global.main_win = mainWindow
-
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
-
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-
-  mainWindow.on('close', (e: Electron.Event) => {
-    if (global.is_will_quit) {
-      global.main_win = null
-    } else {
-      e.preventDefault()
-      global.main_win?.hide()
-    }
-  })
-
-  mainWindow.on('closed', () => {
-    global.main_win = null
-  })
-
-  mainWindow.on('blur', () => {
-    console.log('mainWindow blur')
-    if (!mainWindow.isAlwaysOnTop()) {
-      global.main_win?.webContents.send(EventTypes.CLIP_BLUR, 'ok')
-      global.main_win?.hide()
-    }
-  })
-
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  env.loadPage(mainWindow, '')
-}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -86,7 +31,7 @@ app.whenReady().then(async () => {
   initController()
 
   createTary()
-  createWindow()
+  clipWin.createWindow()
   settingsWin.makeWindow()
   registerShortcut()
   // Default open or close DevTools by F12 in development
@@ -98,7 +43,7 @@ app.whenReady().then(async () => {
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) clipWin.createWindow()
   })
 })
 
