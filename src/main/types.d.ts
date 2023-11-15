@@ -1,5 +1,6 @@
 /* eslint-disable no-var */
 import { BrowserWindow } from 'electron'
+import SettingsDO from './do/settings-do'
 
 declare global {
   var data_dir: string | undefined
@@ -10,5 +11,6 @@ declare global {
   var is_will_quit: boolean
   var clipDB: PouchDB.Database<ClipItemDoc>
   var defaultDB: PouchDB.Database<BaseDoc>
+  var settings: SettingsDO
   var tary: Electron.Tray
 }

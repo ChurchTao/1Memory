@@ -10,7 +10,12 @@ declare global {
         closeWin(name: string): void
         pin(name: string, pin: boolean): void
         setSize(name: string, width: number, height: number): void
+      }
+      settings: {
+        getAll(): Promise<SettingsDO>
         datkModeSet(darkMode: string): void
+        languageSet(language: string): void
+        onChange(callback: (event: SettingsVO) => void): void
       }
       clip: {
         getById(id: string): Promise<ClipItemDocVO>
@@ -25,6 +30,7 @@ declare global {
         handleCopyTxt(id: string): void
         onChange(callback: () => void): void
         onBlur(callback: () => void): void
+        onUILanguageChange(callback: (event: string) => void): void
       }
     }
   }

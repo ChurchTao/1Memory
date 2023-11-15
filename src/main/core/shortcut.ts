@@ -1,9 +1,8 @@
 import { globalShortcut } from 'electron'
-import { WindowUtil } from '../utils/window-util'
 
 export function registerShortcut(): void {
   const ret = globalShortcut.register('Option+Space', () => {
-    global.main_win?.isVisible() ? WindowUtil.hideClipWindowAll() : global.main_win?.show()
+    global.main_win?.isVisible() ? global.main_win?.hide() : global.main_win?.show()
   })
 
   if (!ret) {

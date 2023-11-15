@@ -13,9 +13,7 @@
 };
  */
 
-import { MimeTypes, ClipAttachMentTypes, DB_CLIP_ITEM_PREFIX } from '../../common/const'
-
-const _prefix = DB_CLIP_ITEM_PREFIX
+import { MimeTypes, ClipAttachMentTypes } from '../../common/const'
 
 export default class ClipItemDocDo {
   private _id: string
@@ -31,7 +29,7 @@ export default class ClipItemDocDo {
   private nativeImg: Electron.NativeImage | null
 
   constructor(id: string) {
-    this._id = _prefix + id
+    this._id = id
     this.txt = ''
     this.createdAt = Date.now()
     this.types = []

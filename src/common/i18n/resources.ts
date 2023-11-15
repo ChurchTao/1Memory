@@ -32,7 +32,10 @@ export const resources = {
       clip_search_mode_regexp: '正则表达式搜索',
       clip_search_empty: '没有找到匹配的内容',
       clip_item_context_menu_copy: '仅复制',
-      clip_item_context_menu_copy_text: '复制为纯文本'
+      clip_item_context_menu_copy_text: '复制为纯文本',
+      settings_general_auto_launch: '开机时启动',
+      settings_general_language: '语言',
+      settings_general_theme: '主题'
     }
   },
   en: {
@@ -68,7 +71,10 @@ export const resources = {
       clip_search_mode_regexp: 'Search by regexp',
       clip_search_empty: 'No results found.',
       clip_item_context_menu_copy: 'Only Copy',
-      clip_item_context_menu_copy_text: 'Copy as Plain Text'
+      clip_item_context_menu_copy_text: 'Copy as Plain Text',
+      settings_general_auto_launch: 'Launch on startup',
+      settings_general_language: 'Language',
+      settings_general_theme: 'Theme'
     }
   }
 }

@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { ClipItemDocVO } from '../common/vo'
 import { ControllerApi, EventTypes } from '../common/const'
+import SettingsDO from '../main/do/settings-do'
 
 // Custom APIs for renderer
 const api = {
@@ -12,8 +12,19 @@ const api = {
     pin: (name: string, pin: boolean): void =>
       ipcRenderer.send(ControllerApi.WIN_SET_PIN, name, pin),
     setSize: (name: string, width: number, height: number): void =>
-      ipcRenderer.send(ControllerApi.WIN_SET_SIZE, name, width, height),
-    datkModeSet: (darkMode: string): void => ipcRenderer.send(ControllerApi.DARK_MODE_SET, darkMode)
+      ipcRenderer.send(ControllerApi.WIN_SET_SIZE, name, width, height)
+  },
+  settings: {
+    getAll: (): Promise<SettingsDO> => ipcRenderer.invoke(ControllerApi.SETTINGS_GET_ALL),
+    onChange: (callback: (event: SettingsVO) => void): void => {
+      ipcRenderer.on(EventTypes.SETTINGS_CHANGE, (event, value) => {
+        callback(value)
+      })
+    },
+    datkModeSet: (darkMode: string): void =>
+      ipcRenderer.send(ControllerApi.DARK_MODE_SET, darkMode),
+    languageSet: (language: string): void =>
+      ipcRenderer.send(ControllerApi.SETTINGS_LANGUAGE_SET, language)
   },
   clip: {
     getById: (id: string): Promise<ClipItemDocVO> =>
@@ -36,6 +47,11 @@ const api = {
     onBlur: (callback: () => void): void => {
       ipcRenderer.on(EventTypes.CLIP_BLUR, () => {
         callback()
+      })
+    },
+    onUILanguageChange: (callback: (event: string) => void): void => {
+      ipcRenderer.on(EventTypes.UI_LANG_CHANGE, (_event, value) => {
+        callback(value)
       })
     }
   }

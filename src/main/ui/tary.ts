@@ -1,5 +1,5 @@
 import { Menu, Tray, app, nativeTheme } from 'electron'
-import i18n from '../../common/i18n/index'
+import i18n from 'i18next'
 import { platform } from '@electron-toolkit/utils'
 
 export function createTary(): void {
@@ -22,6 +22,11 @@ export function createTary(): void {
     }
   ])
   tray.setContextMenu(contextMenu)
+}
+
+export function refreshTary(): void {
+  global.tary?.destroy()
+  createTary()
 }
 
 function getTray(): Tray {

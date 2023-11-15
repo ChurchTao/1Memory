@@ -13,27 +13,37 @@ import {
 import React, { useState } from 'react'
 import classes from '../../assets/Settings.module.scss'
 import { IconMoon, IconSun } from '@tabler/icons-react'
-const GeneralSettings: React.FC = () => {
-  const [openOnLogin, setOpenOnLogin] = useState(true)
-  const [language, setLanguage] = useState('en')
-  const [theme, setTheme] = useState('auto')
+import { changeLanguage } from '../../common/i18n'
+import { useTranslation } from 'react-i18next'
+
+interface GeneralSettingsProps {
+  settings: SettingsVO | null
+}
+
+const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
   const { setColorScheme } = useMantineColorScheme()
+  const [openOnLogin, setOpenOnLogin] = useState(settings?.general.autoLaunch)
+  const [language, setLanguage] = useState(settings?.general.language)
+  const [theme, setTheme] = useState(settings?.general.theme)
+  const { t } = useTranslation()
   const handleThemeChange = (event: string | null): void => {
     if (!event) {
       setColorScheme('auto')
-      window.api.win.datkModeSet('system')
+      window.api.settings.datkModeSet('system')
       return
     }
-    setTheme(event)
     if (event === 'auto') {
+      setTheme(event)
       setColorScheme('auto')
-      window.api.win.datkModeSet('system')
+      window.api.settings.datkModeSet('system')
     } else if (event === 'light') {
+      setTheme(event)
       setColorScheme(event)
-      window.api.win.datkModeSet('light')
+      window.api.settings.datkModeSet('light')
     } else if (event === 'dark') {
+      setTheme(event)
       setColorScheme(event)
-      window.api.win.datkModeSet('dark')
+      window.api.settings.datkModeSet('dark')
     }
   }
 
@@ -46,6 +56,7 @@ const GeneralSettings: React.FC = () => {
       return
     }
     setLanguage(event)
+    changeLanguage(event)
   }
 
   return (
@@ -54,12 +65,12 @@ const GeneralSettings: React.FC = () => {
         id="open-on-login"
         checked={openOnLogin}
         onChange={handleOpenOnLoginChange}
-        label="开机时启动"
+        label={t('settings_general_auto_launch')}
         size="xs"
         classNames={{ label: classes.label }}
       />
       <Group gap={0}>
-        <Text fz={'sm'}>语言：</Text>
+        <Text fz={'sm'}>{t('settings_general_language')}：</Text>
         <Select
           w={90}
           size="xs"
@@ -69,12 +80,12 @@ const GeneralSettings: React.FC = () => {
           onChange={handleLanguageChange}
           data={[
             { value: 'en', label: 'English' },
-            { value: 'zh', label: '中文' }
+            { value: 'zh', label: '简体中文' }
           ]}
         />
       </Group>
       <Group gap={0}>
-        <Text fz={'sm'}>主题：</Text>
+        <Text fz={'sm'}>{t('settings_general_theme')}：</Text>
         <SegmentedControl
           onChange={handleThemeChange}
           value={theme}

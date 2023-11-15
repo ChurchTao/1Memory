@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import GeneralSettings from '../components/settings/GeneralSettings'
 import ClipboardSettings from '../components/settings/ClipboardSettings'
 import AboutSettings from '../components/settings/AboutSettings'
@@ -11,18 +11,24 @@ import {
   // IconShirt,
 } from '@tabler/icons-react'
 import { Box, Divider, Flex, Stack, Image } from '@mantine/core'
-import AppearanceSettings from '@renderer/components/settings/AppearanceSettings'
-import SecuritySettings from '@renderer/components/settings/SecuritySettings'
 import DeveloperSettings from '@renderer/components/settings/DeveloperSettings'
 import classes from '@renderer/assets/Settings.module.scss'
 import aboutLogo from '@renderer/assets/image/about_logo32x32@2x.png'
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general')
+  const [settings, setSettings] = useState<SettingsVO | null>(null)
 
   const handleTabClick = (tab: string): void => {
     setActiveTab(tab)
   }
+
+  useEffect(() => {
+    window.api.settings.getAll().then((settings) => {
+      console.log(settings)
+      setSettings(settings)
+    })
+  }, [])
 
   return (
     <>
@@ -75,14 +81,14 @@ const Settings: React.FC = () => {
           </Stack>
         </Box>
         <Divider orientation="vertical" />
-        <Box w="64%" px={20} py={30}>
-          {activeTab === 'general' && <GeneralSettings />}
-          {activeTab === 'clipboard' && <ClipboardSettings />}
-          {activeTab === 'about' && <AboutSettings />}
-          {activeTab === 'appearance' && <AppearanceSettings />}
-          {activeTab === 'security' && <SecuritySettings />}
-          {activeTab === 'developer' && <DeveloperSettings />}
-        </Box>
+        {settings && (
+          <Box w="64%" px={20} py={30}>
+            {activeTab === 'general' && <GeneralSettings settings={settings} />}
+            {activeTab === 'clipboard' && <ClipboardSettings />}
+            {activeTab === 'about' && <AboutSettings />}
+            {activeTab === 'developer' && <DeveloperSettings />}
+          </Box>
+        )}
       </Flex>
     </>
   )

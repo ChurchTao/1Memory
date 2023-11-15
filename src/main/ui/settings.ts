@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron'
 import { env } from '../utils/env'
 import { join } from 'path'
-import i18n from '../../common/i18n/index'
+import i18n from 'i18next'
 
 const makeWindow = (): BrowserWindow => {
   let win: BrowserWindow | null
@@ -38,6 +38,10 @@ const makeWindow = (): BrowserWindow => {
   global.settings_win = win
 
   return win
+}
+
+export const refreshUI = (): void => {
+  global.settings_win?.setTitle(i18n.t('settings_title'))
 }
 
 export { makeWindow }

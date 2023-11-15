@@ -1,13 +1,13 @@
 import ReactDOM from 'react-dom/client'
 import './assets/globals.scss'
 import '@mantine/core/styles.css'
+import './common/i18n'
 import Clip from './pages/Clip'
 import Settings from './pages/Settings'
 import PageWrapper from '@renderer/common/PageWrapper'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { MantineProvider } from '@mantine/core'
 import { theme, cssVariablesResolver } from './theme'
-import '@common/i18n/index'
 import React from 'react'
 
 const router = createHashRouter([

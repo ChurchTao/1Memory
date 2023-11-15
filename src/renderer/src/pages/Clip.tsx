@@ -13,7 +13,6 @@ import { useEffect, useRef, useState, KeyboardEvent as ReactKeyboardEvent } from
 import ClipContentItem from '../components/clip/ClipContentItem'
 import ClipBottomBar from '../components/clip/ClipBottomBar'
 import { ClipItemType, ClipItem } from '@renderer/domain/data'
-import { ClipItemDocVO } from '@common/vo'
 import { MimeTypes, SearchModes } from '@common/const'
 import { useTranslation } from 'react-i18next'
 import { Key } from 'ts-key-enum'
@@ -32,6 +31,7 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import classes from '../assets/Clip.module.scss'
 import { Command } from 'cmdk'
+import i18n from 'i18next'
 
 function convertToClipItem(item: ClipItemDocVO): ClipItem | null {
   if (item.types.includes(MimeTypes.IMG) && item.thumbnail !== null) {
@@ -78,7 +78,6 @@ function Clip(): JSX.Element {
   const [selectId, setSelectId] = useState('')
   const [selectIndex, setSelectIndex] = useState(0)
   const [contentList, setContentList] = useState<Array<ClipItem>>([])
-  const [init, setInit] = useState(false)
   const [showIndex, setShowIndex] = useState(false)
   const [searchTxt, setSearchTxt] = useState('')
   const [inputTipShow, setInputTipShow] = useState(false)
@@ -250,7 +249,9 @@ function Clip(): JSX.Element {
     window.api.clip.onBlur(() => {
       setShowIndex(false)
     })
-    setInit(true)
+    window.api.clip.onUILanguageChange((event: string) => {
+      i18n.changeLanguage(event)
+    })
   }
 
   const handleDeleteById = (): void => {
@@ -278,9 +279,7 @@ function Clip(): JSX.Element {
   }
 
   useEffect(() => {
-    if (!init) {
-      handleInit()
-    }
+    handleInit()
   }, [])
 
   const handleOnKeyDown = (e: ReactKeyboardEvent): void => {

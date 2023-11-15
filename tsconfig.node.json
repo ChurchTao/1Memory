@@ -4,6 +4,12 @@
   "compilerOptions": {
     "composite": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["electron-vite/node"]
+    "types": ["electron-vite/node"],
+    "baseUrl": ".",
+    "paths": {
+      "@common/*": [
+        "src/common/*"
+      ]
+    }
   }
 }

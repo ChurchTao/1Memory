@@ -9,6 +9,8 @@ import { initController } from './controller'
 import { createTary } from './ui/tary'
 import { registerShortcut, unregisterShortcut } from './core/shortcut'
 import { EventTypes } from '../common/const'
+import { initSettings } from './service/settings-service'
+import { init as initI18N } from './core/i18n'
 
 function createWindow(): void {
   // Create the browser window.
@@ -79,6 +81,8 @@ app.whenReady().then(async () => {
     global.clipDB = clipDB
   }
   ClipTimer.getInstance().startListen()
+  await initSettings()
+  initI18N()
   initController()
 
   createTary()
