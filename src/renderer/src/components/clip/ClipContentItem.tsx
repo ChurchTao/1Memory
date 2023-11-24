@@ -10,15 +10,16 @@ import {
   IconSquare9Filled,
   IconClipboard
 } from '@tabler/icons-react'
-import { ClipItem } from '@renderer/domain/data'
 import { Fragment, useMemo } from 'react'
 import { Flex, Image, Mark, Text } from '@mantine/core'
 import classes from '../../assets/Clip.module.scss'
 import { Command } from 'cmdk'
+import { MemoryItemReact } from '@common/bo'
+import { useTranslation } from 'react-i18next'
 
 interface ClipContentItemProps {
   id: string
-  content: ClipItem
+  content: MemoryItemReact
   selected: boolean
   index: number
   showIndex: boolean
@@ -29,6 +30,7 @@ interface ClipContentItemProps {
 }
 
 export default function ClipContentItem(props: ClipContentItemProps): JSX.Element {
+  const { t } = useTranslation()
   const { id, content, selected, index, showIndex, highLight } = props
   return (
     <>
@@ -43,7 +45,7 @@ export default function ClipContentItem(props: ClipContentItemProps): JSX.Elemen
         <Flex align={'center'}>{getIcon(showIndex, index)}</Flex>
         {renderContent(content, highLight)}
         <span className={classes.itemRight} data-choose={selected}>
-          {getTypeText(content.type)}
+          {t(`mime_types_${content.type}`)}
         </span>
       </Command.Item>
     </>
@@ -107,7 +109,7 @@ const MyHighlight = (props: { text: string; query: string }): JSX.Element => {
   )
 }
 
-const renderContent = (content: ClipItem, highLight: string): JSX.Element => {
+const renderContent = (content: MemoryItemReact, highLight: string): JSX.Element => {
   switch (content.type) {
     case 'text':
       return <MyHighlight text={content.value} query={highLight} />
@@ -115,29 +117,12 @@ const renderContent = (content: ClipItem, highLight: string): JSX.Element => {
       return <Image maw={150} mah={150} fit={'contain'} src={content.value} />
     case 'html':
       return <MyHighlight text={content.value} query={highLight} />
-    case 'file':
-      return <Text>{'未知类型'}</Text>
+    // case 'file':
+    //   return <Text>{'未知类型'}</Text>
     case 'rtf':
       return <MyHighlight text={content.value} query={highLight} />
     default:
       return <Text>{'未知类型'}</Text>
-  }
-}
-
-const getTypeText = (type: string): string => {
-  switch (type) {
-    case 'text':
-      return 'Text'
-    case 'html':
-      return 'Html'
-    case 'image':
-      return 'Image'
-    case 'file':
-      return 'File'
-    case 'rtf':
-      return 'Rtf'
-    default:
-      return 'Text'
   }
 }
 

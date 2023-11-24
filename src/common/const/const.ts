@@ -21,15 +21,26 @@ export const SearchModes = {
   RTF: 'text/rtf'
 }
 
-/**
- * 剪贴板数据类型
- */
-export enum ClipAttachMentTypes {
-  IMG = 'image',
-  IMG_THUMB = 'thumbnail',
-  HTML = 'html',
-  RTF = 'rtf',
-  MAC_FILE = 'mac_file'
+export enum MemoryItemDescEnum {
+  CLIP_IMG = 'clipImage',
+  CLIP_IMG_THUMB = 'ClipImageThumbnail',
+  CLIP_HTML = 'clipHtml',
+  CLIP_RTF = 'clipRtf'
+}
+
+export enum ClipBoardContentType {
+  text = 'text',
+  html = 'html',
+  image = 'image',
+  rtf = 'rtf',
+  bookmark = 'bookmark'
+}
+
+export enum MemoryItemContentType {
+  text = 'text',
+  html = 'html',
+  image = 'image',
+  rtf = 'rtf'
 }
 
 /**
@@ -60,9 +71,6 @@ export enum ControllerApi {
   SETTINGS_LANGUAGE_SET = 'settings::languageSet'
 }
 
-/**
- * 默认数据库的 id
- */
-export enum DefaultDBIds {
+export enum CommonDataTitle {
   SYSTEM_SETTINGS = 'system_settings'
 }

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { FuncKeyShow } from '@common/key-map'
+import { FuncKeyShow } from '@common/const'
 import { Command } from 'cmdk'
 import classes from '@renderer/assets/ClipKbd.module.scss'
 

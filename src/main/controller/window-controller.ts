@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { closeWin, pinOrNot, setSize } from '../service/window-service'
-import { ControllerApi } from '../../common/const'
+import { ControllerApi } from '../../common/const/const'
 
 export function initWinController(): void {
   ipcMain.on(ControllerApi.WIN_OPEN, (_event, name) => {

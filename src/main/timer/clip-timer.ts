@@ -1,31 +1,25 @@
 import { clipboard } from 'electron'
-import { saveClipItem } from '../dao/clip-dao'
-import { getLatestDetail } from '../service/clip-service'
-import ClipItemDocDo from '../do/clipItem-doc-do'
-import { v4 as uuid4 } from 'uuid'
-import { EventTypes, MimeTypes } from '../../common/const'
+import { EventTypes, MimeTypes } from '../../common/const/const'
+import { saveMemory } from '../core/db'
+import { ClipItemBO } from '@common/bo'
 
 export default class ClipTimer {
   private static instance: ClipTimer = new ClipTimer()
-  private lastClipDO: ClipItemDocDo | null
+  private lastClipBO: ClipItemBO | null
   private timer: NodeJS.Timeout | null
   constructor() {
     console.log('ClipTimer constructor')
-    this.lastClipDO = null
+    this.lastClipBO = null
     this.timer = null
   }
 
-  public setLastClipDO(clipDO: ClipItemDocDo): void {
-    this.lastClipDO = clipDO
+  public setLastClipDO(clipDO: ClipItemBO): void {
+    this.lastClipBO = clipDO
   }
 
   public async startListen(): Promise<void> {
     if (this.timer) {
       return
-    }
-    const latestDoc = await getLatestDetail()
-    if (latestDoc) {
-      this.lastClipDO = latestDoc
     }
     console.log('startListen')
     this.timer = setInterval(() => {
@@ -40,7 +34,7 @@ export default class ClipTimer {
       if (formats.length === 0) {
         return
       }
-      const clipDO: ClipItemDocDo = new ClipItemDocDo(uuid4())
+      const clipDO: ClipItemBO = new ClipItemBO()
       clipDO.setTypes(formats)
 
       if (formats.includes(MimeTypes.TXT)) {
@@ -82,7 +76,7 @@ export default class ClipTimer {
       }
 
       // 比较剪贴板内容是否变化
-      if (this.lastClipDO && this.lastClipDO.equals(clipDO)) {
+      if (this.lastClipBO && this.lastClipBO.equals(clipDO)) {
         return
       }
 
@@ -101,13 +95,11 @@ export default class ClipTimer {
 
       // 制作缩略图
       clipDO.makeThumbnail()
-      saveClipItem(clipDO)
-      this.lastClipDO = clipDO
+      const memoryItem = clipDO.toMemoryItem()
+      console.log('memoryItem:', memoryItem)
+      saveMemory(memoryItem.memoryItem, memoryItem.attachments)
+      this.lastClipBO = clipDO
       global.main_win?.webContents.send(EventTypes.CLIP_CHANGE, 'ok')
-
-      // 1.使用pouchDB存储剪贴板内容(以附件形式)
-      // 2.通过get(获取digst)
-      // 3.把degis更新到外面的字段，方便查重
     }, 3000)
   }
 

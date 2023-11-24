@@ -44,4 +44,4 @@ export const refreshUI = (): void => {
   global.settings_win?.setTitle(i18n.t('settings_title'))
 }
 
-export { makeWindow }
+export { makeWindow as createSettingWindow }

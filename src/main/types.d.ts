@@ -1,6 +1,8 @@
 /* eslint-disable no-var */
+import { SettingsBO } from '@common/bo'
 import { BrowserWindow } from 'electron'
-import SettingsDO from './do/settings-do'
+
+import Realm from 'realm'
 
 declare global {
   var data_dir: string | undefined
@@ -9,8 +11,7 @@ declare global {
   var main_win: BrowserWindow | null
   var settings_win: BrowserWindow | null
   var is_will_quit: boolean
-  var clipDB: PouchDB.Database<ClipItemDoc>
-  var defaultDB: PouchDB.Database<BaseDoc>
-  var settings: SettingsDO
+  var settings: SettingsBO
   var tary: Electron.Tray
+  var realm: Realm | null
 }

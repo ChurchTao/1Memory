@@ -1,11 +1,11 @@
 import { ipcMain, nativeTheme } from 'electron'
-import { ControllerApi } from '../../common/const'
+import { ControllerApi } from '../../common/const/const'
 import { saveAllConfig } from '../service/settings-service'
 import i18n from 'i18next'
 
 export function initSettingsController(): void {
   ipcMain.handle(ControllerApi.SETTINGS_GET_ALL, async () => {
-    return global.settings.toVO()
+    return global.settings
   })
 
   ipcMain.on(ControllerApi.DARK_MODE_SET, (_event, darkMode) => {
@@ -15,7 +15,7 @@ export function initSettingsController(): void {
     }
     // 设置系统主题
     nativeTheme.themeSource = darkMode
-    global.settings.getGeneral().theme = darkMode
+    global.settings.general.theme = darkMode
     saveAllConfig()
   })
 
@@ -25,7 +25,7 @@ export function initSettingsController(): void {
       language = 'zh'
     }
     i18n.changeLanguage(language)
-    global.settings.getGeneral().language = language
+    global.settings.general.language = language
     saveAllConfig()
   })
 }

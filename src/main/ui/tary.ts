@@ -2,7 +2,7 @@ import { Menu, Tray, app, nativeTheme } from 'electron'
 import i18n from 'i18next'
 import { platform } from '@electron-toolkit/utils'
 
-export function createTary(): void {
+function createTary(): void {
   if (platform.isMacOS) {
     app.dock.hide()
   }
@@ -24,7 +24,7 @@ export function createTary(): void {
   tray.setContextMenu(contextMenu)
 }
 
-export function refreshTary(): void {
+function refreshTary(): void {
   global.tary?.destroy()
   createTary()
 }
@@ -40,3 +40,5 @@ function getTray(): Tray {
     }
   }
 }
+
+export { createTary, refreshTary }
