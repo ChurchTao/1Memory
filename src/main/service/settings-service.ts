@@ -1,24 +1,24 @@
-import { EventTypes } from '../../common/const'
-import { saveSettings, getSettings } from '../dao/settings-dao'
-import SettingsDO from '../do/settings-do'
+import { CommonDataTitle, EventTypes } from '@common/const'
+import { getCommonData, saveCommonData } from '../core/db'
+import { SettingsBO } from '@common/bo'
 
-export function getAllConfig(): Promise<SettingsDO> {
-  return new Promise<SettingsDO>((resolve) => {
-    getSettings()
-      .then((doc) => {
-        const settings = new SettingsDO()
-        settings.fromDoc(doc)
-        resolve(settings)
-      })
-      .catch(() => {
-        resolve(new SettingsDO())
-      })
+export function getAllConfig(): Promise<SettingsBO> {
+  return new Promise<SettingsBO>((resolve) => {
+    const settingsData = getCommonData(CommonDataTitle.SYSTEM_SETTINGS)
+    if (settingsData) {
+      resolve(SettingsBO.of(settingsData.data))
+    } else {
+      resolve(new SettingsBO())
+    }
   })
 }
 
 export function saveAllConfig(): void {
-  saveSettings(global.settings.toDoc())
-  global.settings_win?.webContents.send(EventTypes.SETTINGS_CHANGE, global.settings.toVO())
+  saveCommonData({
+    title: CommonDataTitle.SYSTEM_SETTINGS,
+    data: global.settings.toString()
+  })
+  global.settings_win?.webContents.send(EventTypes.SETTINGS_CHANGE, global.settings)
 }
 
 export async function initSettings(): Promise<void> {

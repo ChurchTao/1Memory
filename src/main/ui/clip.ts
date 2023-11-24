@@ -2,13 +2,18 @@ import { shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { env } from '../utils/env'
-import { EventTypes } from '@common/const'
+import { EventTypes } from '@common/const/const'
 
-export function createWindow(): void {
+const mainWindowSize = {
+  width: 640,
+  height: 500
+}
+
+function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 640,
-    height: 500,
+    width: mainWindowSize.width,
+    height: mainWindowSize.height,
     resizable: false,
     show: false,
     skipTaskbar: false,
@@ -18,6 +23,10 @@ export function createWindow(): void {
       sandbox: false,
       devTools: is.dev
     }
+  })
+
+  mainWindow.setVisibleOnAllWorkspaces(true, {
+    visibleOnFullScreen: true
   })
 
   global.main_win = mainWindow
@@ -56,3 +65,5 @@ export function createWindow(): void {
   // Load the remote URL for development or the local html file for production.
   env.loadPage(mainWindow, '')
 }
+
+export { createWindow as createMainWindow, mainWindowSize }

@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { ControllerApi, EventTypes } from '../common/const'
-import SettingsDO from '../main/do/settings-do'
+import { ControllerApi, EventTypes } from '../common/const/const'
+import { MemoryItemDetailVO, MemoryItemListVO, PageResult, SettingsBO } from '@common/bo'
 
 // Custom APIs for renderer
 const api = {
@@ -15,8 +15,8 @@ const api = {
       ipcRenderer.send(ControllerApi.WIN_SET_SIZE, name, width, height)
   },
   settings: {
-    getAll: (): Promise<SettingsDO> => ipcRenderer.invoke(ControllerApi.SETTINGS_GET_ALL),
-    onChange: (callback: (event: SettingsVO) => void): void => {
+    getAll: (): Promise<SettingsBO> => ipcRenderer.invoke(ControllerApi.SETTINGS_GET_ALL),
+    onChange: (callback: (event: SettingsBO) => void): void => {
       ipcRenderer.on(EventTypes.SETTINGS_CHANGE, (event, value) => {
         callback(value)
       })
@@ -27,14 +27,14 @@ const api = {
       ipcRenderer.send(ControllerApi.SETTINGS_LANGUAGE_SET, language)
   },
   clip: {
-    getById: (id: string): Promise<ClipItemDocVO> =>
+    getById: (id: string): Promise<MemoryItemDetailVO> =>
       ipcRenderer.invoke(ControllerApi.CLIP_GET_BY_ID, id),
     findByTxtLike: (
       txt: string,
       type: string,
       pageNum: number,
       pageSize: number
-    ): Promise<ClipItemDocVO[]> =>
+    ): Promise<PageResult<MemoryItemListVO>> =>
       ipcRenderer.invoke(ControllerApi.CLIP_FIND_BY_TXT_LIKE, txt, type, pageNum, pageSize),
     deleteById: (id: string): void => ipcRenderer.send(ControllerApi.CLIP_DELETE_BY_ID, id),
     handleCopy: (id: string): void => ipcRenderer.send(ControllerApi.CLIP_HANDLE_COPY, id),

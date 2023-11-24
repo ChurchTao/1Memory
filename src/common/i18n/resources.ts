@@ -35,7 +35,11 @@ export const resources = {
       clip_item_context_menu_copy_text: '复制为纯文本',
       settings_general_auto_launch: '开机时启动',
       settings_general_language: '语言',
-      settings_general_theme: '主题'
+      settings_general_theme: '主题',
+      mime_types_text: '纯文本',
+      mime_types_html: 'HTML',
+      mime_types_image: '图片',
+      mime_types_rtf: '富文本'
     }
   },
   en: {
@@ -74,7 +78,11 @@ export const resources = {
       clip_item_context_menu_copy_text: 'Copy as Plain Text',
       settings_general_auto_launch: 'Launch on startup',
       settings_general_language: 'Language',
-      settings_general_theme: 'Theme'
+      settings_general_theme: 'Theme',
+      mime_types_text: 'Text',
+      mime_types_html: 'HTML',
+      mime_types_image: 'Image',
+      mime_types_rtf: 'Rich Text'
     }
   }
 }

@@ -12,8 +12,7 @@ import {
 import { useEffect, useRef, useState, KeyboardEvent as ReactKeyboardEvent } from 'react'
 import ClipContentItem from '../components/clip/ClipContentItem'
 import ClipBottomBar from '../components/clip/ClipBottomBar'
-import { ClipItemType, ClipItem } from '@renderer/domain/data'
-import { MimeTypes, SearchModes } from '@common/const'
+import { MemoryItemContentType, MimeTypes, SearchModes } from '@common/const'
 import { useTranslation } from 'react-i18next'
 import { Key } from 'ts-key-enum'
 import {
@@ -32,14 +31,15 @@ import { useDisclosure } from '@mantine/hooks'
 import classes from '../assets/Clip.module.scss'
 import { Command } from 'cmdk'
 import i18n from 'i18next'
+import { MemoryItemListVO, MemoryItemReact, PageResult } from '@common/bo'
 
-function convertToClipItem(item: ClipItemDocVO): ClipItem | null {
-  if (item.types.includes(MimeTypes.IMG) && item.thumbnail !== null) {
-    const blob = new Blob([item.thumbnail], { type: MimeTypes.IMG })
+function convertToMemoryItem(item: MemoryItemListVO): MemoryItemReact | null {
+  if (item.types.includes(MimeTypes.IMG) && item.thumbnail) {
+    const blob = new Blob([item.thumbnail.data], { type: MimeTypes.IMG })
     return {
       id: item._id,
       createdAt: item.createdAt,
-      type: 'image',
+      type: MemoryItemContentType.image,
       value: URL.createObjectURL(blob)
     }
   }
@@ -47,11 +47,11 @@ function convertToClipItem(item: ClipItemDocVO): ClipItem | null {
   const hasRtf = item.types.includes(MimeTypes.RTF)
   const hasHtml = item.types.includes(MimeTypes.HTML)
   if (hasTxt || hasRtf || hasHtml) {
-    let _type: ClipItemType = 'text'
-    if (hasHtml) {
-      _type = 'html'
-    } else if (hasRtf) {
-      _type = 'rtf'
+    let _type = MemoryItemContentType.text
+    if (hasRtf) {
+      _type = MemoryItemContentType.rtf
+    } else if (hasHtml) {
+      _type = MemoryItemContentType.html
     }
     return {
       id: item._id,
@@ -77,7 +77,7 @@ function Clip(): JSX.Element {
   const [pin, setPin] = useState(false)
   const [selectId, setSelectId] = useState('')
   const [selectIndex, setSelectIndex] = useState(0)
-  const [contentList, setContentList] = useState<Array<ClipItem>>([])
+  const [contentList, setContentList] = useState<Array<MemoryItemReact>>([])
   const [showIndex, setShowIndex] = useState(false)
   const [searchTxt, setSearchTxt] = useState('')
   const [inputTipShow, setInputTipShow] = useState(false)
@@ -91,6 +91,7 @@ function Clip(): JSX.Element {
   const [contextMenuOpen, setContextMenuOpen] = useState(false)
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 })
   const [kbdOpened, setKbdOpened] = useState(false)
+  const [total, setTotal] = useState(0)
 
   const handleChangeSearchMode = (mode: string): void => {
     let finalMode = SearchModes.ALL
@@ -200,7 +201,7 @@ function Clip(): JSX.Element {
     setSelectIndex(index)
     console.log('handleClickItem', id)
   }
-  const handleDoubleClickItem = (item: ClipItem): void => {
+  const handleDoubleClickItem = (item: MemoryItemReact): void => {
     window.api.clip.handleCopy(item.id)
   }
   const handleContentChange = (txt: string | null, _searchMode?: string): void => {
@@ -228,17 +229,25 @@ function Clip(): JSX.Element {
     }
     const searchType =
       _searchMode === SearchModes.ALL || _searchMode === SearchModes.REGEXP ? '' : _searchMode
-    window.api.clip.findByTxtLike(_searchTxt, searchType, 1, 100).then((res) => {
-      const list: Array<ClipItem> = []
-      res.forEach((item: ClipItemDocVO) => {
-        const clipItem = convertToClipItem(item)
-        if (clipItem !== null) {
-          list.push(clipItem)
+    window.api.clip
+      .findByTxtLike(_searchTxt, searchType, 1, 100)
+      .then((res: PageResult<MemoryItemListVO>) => {
+        const list: Array<MemoryItemReact> = []
+        if (res.total > 0) {
+          res.list.forEach((item: MemoryItemListVO) => {
+            const clipItem = convertToMemoryItem(item)
+            if (clipItem !== null) {
+              list.push(clipItem)
+            }
+          })
+        } else {
+          setSelectId('')
+          setSelectIndex(0)
         }
+        setTotal(res.total)
+        setContentList(list)
+        setSearchTxt(_searchTxt)
       })
-      setContentList(list)
-      setSearchTxt(_searchTxt)
-    })
   }
 
   function handleInit(): void {
@@ -433,7 +442,7 @@ function Clip(): JSX.Element {
               <Command.Empty>{t('clip_search_empty')}</Command.Empty>
               {contentList.length > 0 && (
                 <Command.Group heading="Records">
-                  {contentList.map((item: ClipItem, index: number) => {
+                  {contentList.map((item: MemoryItemReact, index: number) => {
                     return (
                       <ClipContentItem
                         id={item.id}
@@ -486,7 +495,7 @@ function Clip(): JSX.Element {
           </Menu.Dropdown>
         </Menu>
         <ClipBottomBar
-          size={contentList.length}
+          size={total}
           onKbdMenuClose={handleKbdMenuClose}
           onKbdMenuOpen={handleKdbMenuOpen}
           kbdOpened={kbdOpened}

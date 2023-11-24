@@ -1,4 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
+import { MemoryItemDetailVO, SettingsBO } from '@common/bo'
 
 declare global {
   interface Window {
@@ -12,19 +13,19 @@ declare global {
         setSize(name: string, width: number, height: number): void
       }
       settings: {
-        getAll(): Promise<SettingsDO>
+        getAll(): Promise<SettingsBO>
         datkModeSet(darkMode: string): void
         languageSet(language: string): void
-        onChange(callback: (event: SettingsVO) => void): void
+        onChange(callback: (event: SettingsBO) => void): void
       }
       clip: {
-        getById(id: string): Promise<ClipItemDocVO>
+        getById(id: string): Promise<MemoryItemDetailVO>
         findByTxtLike(
           txt: string,
           type: string,
           pageNum: number,
           pageSize: number
-        ): Promise<ClipItemDocVO[]>
+        ): Promise<PageResult<MemoryItemListVO>>
         deleteById(id: string): void
         handleCopy(id: string): void
         handleCopyTxt(id: string): void

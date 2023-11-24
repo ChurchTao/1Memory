@@ -14,10 +14,11 @@ import { Box, Divider, Flex, Stack, Image } from '@mantine/core'
 import DeveloperSettings from '@renderer/components/settings/DeveloperSettings'
 import classes from '@renderer/assets/Settings.module.scss'
 import aboutLogo from '@renderer/assets/image/about_logo32x32@2x.png'
+import { SettingsBO } from '@common/bo'
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general')
-  const [settings, setSettings] = useState<SettingsVO | null>(null)
+  const [settings, setSettings] = useState<SettingsBO | null>(null)
 
   const handleTabClick = (tab: string): void => {
     setActiveTab(tab)

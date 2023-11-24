@@ -1,8 +1,18 @@
 import { globalShortcut } from 'electron'
+import { getOnShowWorkSpaceCenterPoints, mainWindowSize } from '../ui'
 
 export function registerShortcut(): void {
   const ret = globalShortcut.register('Option+Space', () => {
-    global.main_win?.isVisible() ? global.main_win?.hide() : global.main_win?.show()
+    const toHide = global.main_win?.isVisible()
+    if (toHide) {
+      global.main_win?.hide()
+    } else {
+      // 显示在当前的屏幕上
+      global.main_win?.setBounds(
+        getOnShowWorkSpaceCenterPoints(mainWindowSize.width, mainWindowSize.height)
+      )
+      global.main_win?.show()
+    }
   })
 
   if (!ret) {

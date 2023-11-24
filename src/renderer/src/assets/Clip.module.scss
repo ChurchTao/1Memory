@@ -143,6 +143,7 @@
     transition: 100ms ease;
     transition-property: height;
     width: 100%;
+    min-height: 350px;
   }
 
   [cmdk-separator] {

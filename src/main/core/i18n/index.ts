@@ -3,7 +3,7 @@ import { resources } from '@common/i18n/resources'
 import { refresh } from '../../ui/ui'
 
 export function init(): void {
-  const language = global.settings?.getGeneral().language || 'en'
+  const language = global.settings.general.language || 'en'
   console.log('language', language)
   i18n.init({
     resources,
