@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import GeneralSettings from '../components/settings/GeneralSettings'
 import ClipboardSettings from '../components/settings/ClipboardSettings'
 import AboutSettings from '../components/settings/AboutSettings'
@@ -14,22 +14,15 @@ import { Box, Divider, Flex, Stack, Image } from '@mantine/core'
 import DeveloperSettings from '@renderer/components/settings/DeveloperSettings'
 import classes from '@renderer/assets/Settings.module.scss'
 import aboutLogo from '@renderer/assets/image/about_logo32x32@2x.png'
-import { SettingsBO } from '@common/bo'
+import { useSelector } from 'react-redux'
+import { StoreState } from '@renderer/store'
 
 const Settings: React.FC = () => {
+  const settings = useSelector((state: StoreState) => state.settings)
   const [activeTab, setActiveTab] = useState('general')
-  const [settings, setSettings] = useState<SettingsBO | null>(null)
-
   const handleTabClick = (tab: string): void => {
     setActiveTab(tab)
   }
-
-  useEffect(() => {
-    window.api.settings.getAll().then((settings) => {
-      console.log(settings)
-      setSettings(settings)
-    })
-  }, [])
 
   return (
     <>

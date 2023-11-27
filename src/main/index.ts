@@ -7,7 +7,7 @@ import { registerShortcut, unregisterShortcut } from './core/shortcut'
 import { initSettings } from './service/settings-service'
 import { init as initI18N } from './core/i18n'
 import RealmInstance from './core/db/realm-instance'
-import { createMainWindow, createSettingWindow } from './ui'
+import { createMainWindow, createSettingWindow, initUI } from './ui'
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -17,11 +17,11 @@ app.whenReady().then(async () => {
   electronApp.setAppUserModelId('github.churchtao.1memory')
   const realm = RealmInstance.getInstance()
   global.realm = await realm.getRealm()
-  ClipTimer.getInstance().startListen()
   await initSettings()
   initI18N()
   initController()
-
+  initUI()
+  ClipTimer.getInstance().startListen()
   createTary()
   createMainWindow()
   createSettingWindow()

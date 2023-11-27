@@ -21,10 +21,6 @@ class SettingsBO {
       clip: settings.clip
     }
   }
-
-  toString(): string {
-    return JSON.stringify(this)
-  }
 }
 
 /**
@@ -37,7 +33,7 @@ class GeneralSetting {
   //语言
   language: string
   //主题
-  theme: string
+  theme: 'system' | 'light' | 'dark'
 
   constructor() {
     this.autoLaunch = false

@@ -13,38 +13,37 @@ import {
 import React, { useState } from 'react'
 import classes from '../../assets/Settings.module.scss'
 import { IconMoon, IconSun } from '@tabler/icons-react'
-import { changeLanguage } from '../../common/i18n'
 import { useTranslation } from 'react-i18next'
+import { SettingsBO } from '@common/bo'
+import { useDispatch } from 'react-redux'
+import { updateLanguage, updateTheme } from '@renderer/store'
 
 interface GeneralSettingsProps {
-  settings: SettingsVO | null
+  settings: SettingsBO | null
 }
 
 const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
+  const dispatch = useDispatch()
   const { setColorScheme } = useMantineColorScheme()
   const [openOnLogin, setOpenOnLogin] = useState(settings?.general.autoLaunch)
   const [language, setLanguage] = useState(settings?.general.language)
   const [theme, setTheme] = useState(settings?.general.theme)
   const { t } = useTranslation()
-  const handleThemeChange = (event: string | null): void => {
+  const handleThemeChange = (event: string): void => {
     if (!event) {
-      setColorScheme('auto')
-      window.api.settings.datkModeSet('system')
       return
     }
-    if (event === 'auto') {
+    if (event === 'system') {
       setTheme(event)
       setColorScheme('auto')
-      window.api.settings.datkModeSet('system')
     } else if (event === 'light') {
       setTheme(event)
       setColorScheme(event)
-      window.api.settings.datkModeSet('light')
     } else if (event === 'dark') {
       setTheme(event)
       setColorScheme(event)
-      window.api.settings.datkModeSet('dark')
     }
+    dispatch(updateTheme(event))
   }
 
   const handleOpenOnLoginChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -56,7 +55,7 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
       return
     }
     setLanguage(event)
-    changeLanguage(event)
+    dispatch(updateLanguage(event))
   }
 
   return (
@@ -109,7 +108,7 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
               )
             },
             {
-              value: 'auto',
+              value: 'system',
               label: '跟随系统'
             }
           ]}

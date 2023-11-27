@@ -2,7 +2,11 @@ import { EventTypes } from '../../common/const/const'
 import i18n from 'i18next'
 import { refreshUI as refreshSettingsUI } from './settings'
 import { refreshTary } from './tary'
-import { screen } from 'electron'
+import { nativeTheme, screen } from 'electron'
+
+function init(): void {
+  nativeTheme.themeSource = global.settings.general.theme
+}
 
 function refresh(): void {
   refreshSettingsUI()
@@ -20,4 +24,4 @@ function getOnShowWorkSpaceCenterPoints(width: number, height: number): { x: num
   return { x, y }
 }
 
-export { refresh, getOnShowWorkSpaceCenterPoints }
+export { init as initUI, refresh, getOnShowWorkSpaceCenterPoints }
