@@ -143,12 +143,12 @@ function compareTypes(types: Array<string>, types2: Array<string>): boolean {
 }
 
 function compareAttachments(_attachments: AttachmentBO[], _attachments1: AttachmentBO[]): boolean {
-  const _left = _attachments.filter((attachment) => {
-    attachment.desc !== MemoryItemDescEnum.CLIP_IMG_THUMB
-  })
-  const _right = _attachments1.filter((attachment) => {
-    attachment.desc !== MemoryItemDescEnum.CLIP_IMG_THUMB
-  })
+  const _left = _attachments.filter(
+    (attachment) => attachment.desc !== MemoryItemDescEnum.CLIP_IMG_THUMB
+  )
+  const _right = _attachments1.filter(
+    (attachment) => attachment.desc !== MemoryItemDescEnum.CLIP_IMG_THUMB
+  )
   if (_left.length !== _right.length) {
     return false
   }

@@ -27,7 +27,7 @@ import {
   ScrollArea,
   rem
 } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
+import { useDebouncedState, useDisclosure } from '@mantine/hooks'
 import classes from '../assets/Clip.module.scss'
 import { Command } from 'cmdk'
 import i18n from 'i18next'
@@ -92,13 +92,14 @@ function Clip(): JSX.Element {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 })
   const [kbdOpened, setKbdOpened] = useState(false)
   const [total, setTotal] = useState(0)
+  const [searchTxtDebounced, setSearchTxtDebounced] = useDebouncedState('', 200)
 
   const handleChangeSearchMode = (mode: string): void => {
     let finalMode = SearchModes.ALL
     if (mode != searchMode) {
       finalMode = mode
     }
-    let _searchTxt = searchTxt
+    let _searchTxt = searchTxtDebounced
     if (
       finalMode === SearchModes.REGEXP ||
       finalMode === SearchModes.IMG ||
@@ -206,19 +207,16 @@ function Clip(): JSX.Element {
   }
   const handleContentChange = (txt: string | null, _searchMode?: string): void => {
     if (txt === null) {
-      txt = searchTxt
+      txt = searchTxtDebounced
     }
     if (!_searchMode) {
       _searchMode = searchMode
     }
     // 通过正则表达式，过滤highLight中所有的空白符
     txt = txt.replace(/\s+/g, '')
-    // 如果searchByRegex为true，则使用正则表达式搜索,否则把txt内需要转义的字符转义
-    const _searchTxt =
-      _searchMode === SearchModes.REGEXP ? txt : txt.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
     if (_searchMode === SearchModes.REGEXP) {
       try {
-        new RegExp(_searchTxt)
+        new RegExp(txt)
         setInputTips('')
         setInputTipShow(false)
       } catch (e) {
@@ -230,7 +228,7 @@ function Clip(): JSX.Element {
     const searchType =
       _searchMode === SearchModes.ALL || _searchMode === SearchModes.REGEXP ? '' : _searchMode
     window.api.clip
-      .findByTxtLike(_searchTxt, searchType, 1, 100)
+      .findByTxtLike(txt, searchType, 1, 100)
       .then((res: PageResult<MemoryItemListVO>) => {
         const list: Array<MemoryItemReact> = []
         if (res.total > 0) {
@@ -246,21 +244,13 @@ function Clip(): JSX.Element {
         }
         setTotal(res.total)
         setContentList(list)
-        setSearchTxt(_searchTxt)
+        // 如果searchByRegex为true，则使用正则表达式搜索,否则把txt内需要转义的字符转义
+        const _searchTxt =
+          _searchMode === SearchModes.REGEXP
+            ? txt
+            : txt!.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+        setSearchTxt(_searchTxt!)
       })
-  }
-
-  function handleInit(): void {
-    handleContentChange('')
-    window.api.clip.onChange(() => {
-      handleContentChange(null)
-    })
-    window.api.clip.onBlur(() => {
-      setShowIndex(false)
-    })
-    window.api.clip.onUILanguageChange((event: string) => {
-      i18n.changeLanguage(event)
-    })
   }
 
   const handleDeleteById = (): void => {
@@ -288,8 +278,22 @@ function Clip(): JSX.Element {
   }
 
   useEffect(() => {
-    handleInit()
+    // init
+    window.api.clip.onChange(() => {
+      handleContentChange(null)
+    })
+    window.api.clip.onBlur(() => {
+      setShowIndex(false)
+    })
+    window.api.clip.onUILanguageChange((event: string) => {
+      i18n.changeLanguage(event)
+    })
   }, [])
+
+  useEffect(() => {
+    // on searchTxtDebounced changed
+    handleContentChange(searchTxtDebounced)
+  }, [searchTxtDebounced])
 
   const handleOnKeyDown = (e: ReactKeyboardEvent): void => {
     if (opened || stopListenShortcut) {
@@ -362,7 +366,7 @@ function Clip(): JSX.Element {
               }
             }}
             placeholder={t('search_placeholder')}
-            onValueChange={(e): void => handleContentChange(e)}
+            onValueChange={(e): void => setSearchTxtDebounced(e)}
             onKeyDown={(e): void => handleOnKeyDown(e)}
             onKeyUp={(e): void => handleOnKeyUp(e)}
           />

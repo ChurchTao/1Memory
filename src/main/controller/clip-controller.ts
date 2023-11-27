@@ -12,6 +12,7 @@ export function initClipController(): void {
   ipcMain.handle(
     ControllerApi.CLIP_FIND_BY_TXT_LIKE,
     async (_event, txt, type, pageNum, pageSize) => {
+      console.log('search txt', txt)
       const docsRes: PageResult<MemoryItemListVO> = findAllMemory({
         txt,
         type,
