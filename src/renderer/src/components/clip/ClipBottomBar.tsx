@@ -35,14 +35,14 @@ export default function ClipBottomBar(props: ClipBottomBarProps): JSX.Element {
           <div
             className={classes.action}
             onMouseEnter={onKbdMenuOpen}
-            onMouseLeave={onKbdMenuClose}
+            // onMouseLeave={onKbdMenuClose}
           >
             {t('clip_kbd')}
             <kbd>⌘</kbd>
             <kbd>K</kbd>
           </div>
         </Popover.Target>
-        <Popover.Dropdown style={{ padding: 0 }}>
+        <Popover.Dropdown onMouseLeave={onKbdMenuClose} style={{ padding: 0 }}>
           <ClipKbd />
         </Popover.Dropdown>
       </Popover>
