@@ -69,10 +69,10 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
         classNames={{ label: classes.label }}
       />
       <Group gap={0}>
-        <Text fz={'sm'}>{t('settings_general_language')}：</Text>
+        <Text size="sm">{t('settings_general_language')}：</Text>
         <Select
-          w={90}
-          size="xs"
+          w={110}
+          size="sm"
           radius="md"
           id="language"
           value={language}
@@ -84,7 +84,7 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
         />
       </Group>
       <Group gap={0}>
-        <Text fz={'sm'}>{t('settings_general_theme')}：</Text>
+        <Text size="sm">{t('settings_general_theme')}：</Text>
         <SegmentedControl
           onChange={handleThemeChange}
           value={theme}

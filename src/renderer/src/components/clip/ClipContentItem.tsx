@@ -11,7 +11,7 @@ import {
   IconClipboard
 } from '@tabler/icons-react'
 import { Fragment, useMemo } from 'react'
-import { Flex, Image, Mark, Text } from '@mantine/core'
+import { Box, Flex, Image, Mark, Text } from '@mantine/core'
 import classes from '../../assets/Clip.module.scss'
 import { Command } from 'cmdk'
 import { MemoryItemReact } from '@common/bo'
@@ -42,8 +42,8 @@ export default function ClipContentItem(props: ClipContentItemProps): JSX.Elemen
         data-choose={selected}
         onContextMenu={props.onContextMenu}
       >
-        <Flex align={'center'}>{getIcon(showIndex, index)}</Flex>
-        {renderContent(content, highLight)}
+        <Flex>{getIcon(showIndex, index)}</Flex>
+        <Box maw={'80vw'}>{renderContent(content, highLight)}</Box>
         <span className={classes.itemRight} data-choose={selected}>
           {t(`mime_types_${content.type}`)}
         </span>
@@ -88,14 +88,14 @@ const MyHighlight = (props: { text: string; query: string }): JSX.Element => {
   const { text, query } = props
   if (!query) {
     return (
-      <Text lh={2} size="sm" lineClamp={5}>
+      <Text size="sm" lineClamp={5}>
         {text}
       </Text>
     )
   }
   const chunks = useHighlight({ query, text })
   return (
-    <Text lh={2} size="sm" lineClamp={5}>
+    <Text size="sm" lineClamp={5}>
       {chunks.map((chunk, index) => {
         return chunk.match ? (
           <Mark key={index} bg="orange.1">

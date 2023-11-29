@@ -3,7 +3,8 @@ import {
   createTheme,
   Image,
   CSSVariablesResolver,
-  Select
+  Select,
+  rem
 } from '@mantine/core'
 
 export const theme: MantineThemeOverride = createTheme({
@@ -39,6 +40,21 @@ export const theme: MantineThemeOverride = createTheme({
         checkIconPosition: 'right'
       }
     })
+  },
+  fontSizes: {
+    xs: rem(11),
+    sm: rem(13),
+    md: rem(15),
+    lg: rem(17),
+    xl: rem(19)
+  },
+
+  lineHeights: {
+    xs: '1.3',
+    sm: '1.35',
+    md: '1.4',
+    lg: '1.45',
+    xl: '1.5'
   }
 })
 
