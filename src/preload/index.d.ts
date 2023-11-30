@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { MemoryItemDetailVO, SettingsBO } from '@common/bo'
+import { MemoryItemDetailVO, MemoryItemListVO, PageResult, SettingsBO } from '@common/bo'
 
 declare global {
   interface Window {

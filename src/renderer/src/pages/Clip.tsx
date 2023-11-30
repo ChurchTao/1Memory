@@ -63,11 +63,17 @@ function convertToMemoryItem(item: MemoryItemListVO): MemoryItemReact | null {
   return null
 }
 
-function onCopy(id: string, onlyTxt: boolean): void {
-  if (onlyTxt) {
-    window.api.clip.handleCopyTxt(id)
+function onCopy(id: string[], onlyTxt: boolean): void {
+  let _selectedId: string
+  if (id.length > 1) {
+    _selectedId = id.join(',')
   } else {
-    window.api.clip.handleCopy(id)
+    _selectedId = id[0]
+  }
+  if (onlyTxt) {
+    window.api.clip.handleCopyTxt(_selectedId)
+  } else {
+    window.api.clip.handleCopy(_selectedId)
   }
 }
 
@@ -75,10 +81,12 @@ function Clip(): JSX.Element {
   const [alwaysFocusInput, setAlwaysFocusInput] = useState(true)
   const scrollbar = useRef<HTMLDivElement>(null)
   const [pin, setPin] = useState(false)
-  const [selectId, setSelectId] = useState('')
+  const [selectedIdList, setSelectedIdList] = useState<Array<string>>([])
   const [selectIndex, setSelectIndex] = useState(0)
   const [contentList, setContentList] = useState<Array<MemoryItemReact>>([])
   const [showIndex, setShowIndex] = useState(false)
+  const [ctrlPressed, setCtrlPressed] = useState(false)
+  const [shiftPressed, setShiftPressed] = useState(false)
   const [searchTxt, setSearchTxt] = useState('')
   const [inputTipShow, setInputTipShow] = useState(false)
   const [inputTips, setInputTips] = useState('')
@@ -93,6 +101,9 @@ function Clip(): JSX.Element {
   const [kbdOpened, setKbdOpened] = useState(false)
   const [total, setTotal] = useState(0)
   const [searchTxtDebounced, setSearchTxtDebounced] = useDebouncedState('', 200)
+
+  const isMultiSelect: boolean = selectedIdList.length > 1
+  const hasSelected: boolean = selectedIdList.length > 0
 
   const handleChangeSearchMode = (mode: string): void => {
     let finalMode = SearchModes.ALL
@@ -112,32 +123,41 @@ function Clip(): JSX.Element {
   }
 
   const handleMoveSelect = (event: ReactKeyboardEvent): void => {
-    if (selectId === '' && contentList.length > 0) {
+    if (isMultiSelect) {
+      return
+    }
+    if (!hasSelected && contentList.length > 0) {
       setSelectIndex(0)
-      setSelectId(contentList[0].id)
+      setSelectedIdList([contentList[0].id])
       return
     }
     if (event.key === Key.ArrowUp) {
       if (selectIndex > 0) {
         setSelectIndex(selectIndex - 1)
-        setSelectId(contentList[selectIndex - 1].id)
+        setSelectedIdList([contentList[selectIndex - 1].id])
         scrollToCenter(Key.ArrowUp)
       }
     }
     if (event.key === Key.ArrowDown) {
       if (selectIndex < contentList.length - 1) {
         setSelectIndex(selectIndex + 1)
-        setSelectId(contentList[selectIndex + 1].id)
+        setSelectedIdList([contentList[selectIndex + 1].id])
         scrollToCenter(Key.ArrowDown)
       }
     }
   }
 
   const handleCopy = (event: ReactKeyboardEvent): void => {
-    if (event.metaKey || event.ctrlKey) {
-      window.api.clip.handleCopyTxt(selectId)
+    let _selectedId: string
+    if (isMultiSelect) {
+      _selectedId = selectedIdList.join(',')
     } else {
-      window.api.clip.handleCopy(selectId)
+      _selectedId = selectedIdList[0]
+    }
+    if (event.metaKey || event.ctrlKey) {
+      window.api.clip.handleCopyTxt(_selectedId)
+    } else {
+      window.api.clip.handleCopy(_selectedId)
     }
   }
 
@@ -157,16 +177,18 @@ function Clip(): JSX.Element {
   }
 
   const handleShowDeleteDialog = (): void => {
-    if (selectId !== '') {
+    if (hasSelected) {
       setAlwaysFocusInput(false)
       setShowIndex(false)
+      setCtrlPressed(false)
       open()
     }
   }
 
   function scrollToCenter(key: Key): void {
     // 移动到可视区域中间,保证当前选中的元素始终在可视区域最中间
-    const item = document.getElementById(selectId)
+    const _selectId = selectedIdList[0]
+    const item = document.getElementById(_selectId)
     if (scrollbar.current && item !== null) {
       // 元素距离容器顶部的距离
       const itemTop = item.offsetTop
@@ -198,9 +220,40 @@ function Clip(): JSX.Element {
   }
 
   const handleClickItem = (id: string, index: number): void => {
-    setSelectId(id)
-    setSelectIndex(index)
     console.log('handleClickItem', id)
+    if (shiftPressed) {
+      // 按住shift，选中当前行 index 到上一次选中的行 selectIndex 之间的所有行
+      const _selectIndex = selectIndex
+      const _selectedIdList = selectedIdList
+      const _contentList = contentList
+      if (_selectIndex < index) {
+        for (let i = _selectIndex; i <= index; i++) {
+          if (!_selectedIdList.includes(_contentList[i].id)) {
+            _selectedIdList.push(_contentList[i].id)
+          }
+        }
+      } else {
+        for (let i = index; i <= _selectIndex; i++) {
+          if (!_selectedIdList.includes(_contentList[i].id)) {
+            _selectedIdList.push(_contentList[i].id)
+          }
+        }
+      }
+      setSelectIndex(index)
+      setSelectedIdList(_selectedIdList)
+    } else if (ctrlPressed) {
+      // 按住ctrl，选中当前行+之前选中的行
+      const _selectedIdList = selectedIdList
+      if (!_selectedIdList.includes(id)) {
+        _selectedIdList.push(id)
+      }
+      setSelectIndex(index)
+      setSelectedIdList(_selectedIdList)
+    } else {
+      // 普通点击，选中当前行
+      setSelectIndex(index)
+      setSelectedIdList([id])
+    }
   }
   const handleDoubleClickItem = (item: MemoryItemReact): void => {
     window.api.clip.handleCopy(item.id)
@@ -239,7 +292,7 @@ function Clip(): JSX.Element {
             }
           })
         } else {
-          setSelectId('')
+          setSelectedIdList([])
           setSelectIndex(0)
         }
         setTotal(res.total)
@@ -254,25 +307,33 @@ function Clip(): JSX.Element {
   }
 
   const handleDeleteById = (): void => {
-    if (selectId !== '') {
-      window.api.clip.deleteById(selectId)
+    if (hasSelected) {
+      let _selectedId: string
+      if (isMultiSelect) {
+        _selectedId = selectedIdList.join(',')
+      } else {
+        _selectedId = selectedIdList[0]
+      }
+      window.api.clip.deleteById(_selectedId)
       const _selectIndex = selectIndex
       if (_selectIndex < contentList.length - 1) {
         setSelectIndex(_selectIndex + 1)
-        setSelectId(contentList[_selectIndex + 1].id)
+        setSelectedIdList([contentList[_selectIndex + 1].id])
       } else if (_selectIndex > 0) {
         setSelectIndex(_selectIndex - 1)
-        setSelectId(contentList[_selectIndex - 1].id)
+        setSelectedIdList([contentList[_selectIndex - 1].id])
       } else {
         setSelectIndex(0)
-        setSelectId('')
+        setSelectedIdList([])
       }
       handleDeleteDialogClose()
     }
   }
 
   const handleContextMenu = (e, id: string, index: number): void => {
-    handleClickItem(id, index)
+    if (!isMultiSelect) {
+      handleClickItem(id, index)
+    }
     setAnchorPoint({ x: e.clientX, y: e.clientY })
     setContextMenuOpen(true)
   }
@@ -302,6 +363,10 @@ function Clip(): JSX.Element {
     // 按住 Command 显示序号
     if (e.key === Key.Meta || e.key === Key.Control) {
       setShowIndex(true)
+      setCtrlPressed(true)
+    }
+    if (e.key === Key.Shift) {
+      setShiftPressed(true)
     }
     // Escape 关闭窗口
     if (e.key === Key.Escape) {
@@ -329,6 +394,10 @@ function Clip(): JSX.Element {
   const handleOnKeyUp = (e: ReactKeyboardEvent): void => {
     if (e.key === Key.Meta || e.key === Key.Control) {
       setShowIndex(false)
+      setCtrlPressed(false)
+    }
+    if (e.key === Key.Shift) {
+      setShiftPressed(false)
     }
   }
 
@@ -349,6 +418,7 @@ function Clip(): JSX.Element {
     setStopListenShortcut(true)
     setAlwaysFocusInput(false)
     setShowIndex(false)
+    setCtrlPressed(false)
     setKbdOpened(true)
   }
 
@@ -452,7 +522,7 @@ function Clip(): JSX.Element {
                         id={item.id}
                         key={item.id}
                         content={item}
-                        selected={selectId === item.id}
+                        selected={selectedIdList.includes(item.id)}
                         index={index}
                         showIndex={showIndex}
                         highLight={searchTxt}
@@ -478,13 +548,13 @@ function Clip(): JSX.Element {
           </Menu.Target>
           <Menu.Dropdown>
             <Menu.Item
-              onClick={(): void => onCopy(selectId, false)}
+              onClick={(): void => onCopy(selectedIdList, false)}
               leftSection={<IconCopy style={{ width: rem(14), height: rem(14) }} />}
             >
               {t('clip_item_context_menu_copy')}
             </Menu.Item>
             <Menu.Item
-              onClick={(): void => onCopy(selectId, true)}
+              onClick={(): void => onCopy(selectedIdList, true)}
               leftSection={<IconTxt style={{ width: rem(14), height: rem(14) }} />}
             >
               {t('clip_item_context_menu_copy_text')}

@@ -24,7 +24,13 @@ export function initClipController(): void {
   )
 
   ipcMain.on(ControllerApi.CLIP_DELETE_BY_ID, async (_event, id) => {
-    deleteMemoryById(id)
+    const idList: string[] = id.split(',')
+    if (!idList) {
+      return
+    }
+    idList.forEach((id) => {
+      deleteMemoryById(id)
+    })
     global.main_win?.webContents.send(EventTypes.CLIP_CHANGE, 'ok')
   })
 

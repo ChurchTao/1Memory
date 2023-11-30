@@ -51,23 +51,46 @@ function getById(id: BSON.ObjectId, needAttachment: boolean = false): MemoryItem
   if (global.realm) {
     const memoryItem = global.realm.objectForPrimaryKey(MemoryItem, id)
     if (memoryItem) {
-      const res: MemoryItemDetailVO = {
-        _id: memoryItem._id.toString(),
-        txt: memoryItem.txt,
-        createdAt: memoryItem.createdAt,
-        types: memoryItem.types.map((type) => type),
-        kewords: memoryItem.kewords.map((keword) => keword)
-      }
-      if (needAttachment) {
-        const attachments = getAttachment({
-          memoryItemId: memoryItem!._id.toString()
-        })
-        res.attachments = attachments
-      }
-      return res
+      return convertToMemoryItemDetailVO(memoryItem, needAttachment)
     }
   }
   return null
+}
+
+function getByIds(
+  ids: Array<BSON.ObjectId>,
+  needAttachment: boolean = false
+): Array<MemoryItemDetailVO> {
+  if (global.realm) {
+    const memoryItems = global.realm.objects(MemoryItem).filtered(`_id IN $0`, ids)
+    if (memoryItems.length) {
+      const list: MemoryItemDetailVO[] = memoryItems.map((memoryItem) => {
+        return convertToMemoryItemDetailVO(memoryItem, needAttachment)
+      })
+      return list
+    }
+  }
+  return []
+}
+
+function convertToMemoryItemDetailVO(
+  memoryItem: MemoryItem,
+  needAttachment: boolean
+): MemoryItemDetailVO {
+  const res: MemoryItemDetailVO = {
+    _id: memoryItem._id.toString(),
+    txt: memoryItem.txt,
+    createdAt: memoryItem.createdAt,
+    types: memoryItem.types.map((type) => type),
+    kewords: memoryItem.kewords.map((keword) => keword)
+  }
+  if (needAttachment) {
+    const attachments = getAttachment({
+      memoryItemId: memoryItem!._id.toString()
+    })
+    res.attachments = attachments
+  }
+  return res
 }
 
 function getAttachment({ memoryItemId, desc, contentType }: AttachmentQuery): AttachmentVO[] {
@@ -177,6 +200,7 @@ export {
   saveMemory,
   findAll as findAllMemory,
   getById as getMemoryById,
+  getByIds as getMemoryByIds,
   deleteById as deleteMemoryById,
   moveToTop as moveToTopMemory,
   getAttachment as getMemoryAttachment
