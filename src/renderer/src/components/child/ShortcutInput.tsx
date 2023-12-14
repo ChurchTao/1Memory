@@ -9,6 +9,7 @@ import hotkeys from 'hotkeys-js'
 import { useRef, useState } from 'react'
 import { specialKeyCodeNameMap, modifierKeyCodeMap, FuncKeyShow } from '@common/const'
 import { Key } from 'ts-key-enum'
+import classes from '../../assets/ShortcutInput.module.scss'
 
 interface ShortcutInputProps {
   value: string
@@ -19,8 +20,15 @@ interface ShortcutInputProps {
 
 export default function ShortcutInput(props: ShortcutInputProps): JSX.Element {
   const { value, onChange, onClear, ...others } = props
+  let initValue = ''
+  if (value) {
+    initValue = value
+      .split('+')
+      .map((item) => trans2KeyStr(item))
+      .join('')
+  }
   const ref = useRef(null)
-  const [shortcut, setShortcut] = useState(value)
+  const [shortcut, setShortcut] = useState(initValue)
 
   function startListen(): void {
     hotkeys.filter = (): boolean => true
@@ -55,6 +63,9 @@ export default function ShortcutInput(props: ShortcutInputProps): JSX.Element {
       value={shortcut}
       variant="filled"
       radius="md"
+      classNames={{
+        input: classes.shortcutInput
+      }}
       onChange={(e): void => e.preventDefault()}
       leftSection={<IconKeyboard size={20} stroke={1.2} />}
       rightSectionPointerEvents="all"
@@ -146,10 +157,12 @@ function trans2KeyStr(key: string): string {
   }
   if (window.api.platform === 'darwin') {
     switch (key) {
+      case 'Command':
       case Key.Meta:
         return FuncKeyShow.mac.command
       case Key.Control:
         return FuncKeyShow.mac.control
+      case 'Option':
       case Key.Alt:
         return FuncKeyShow.mac.option
       case Key.Shift:

@@ -16,9 +16,11 @@ import classes from '@renderer/assets/Settings.module.scss'
 import aboutLogo from '@renderer/assets/image/about_logo32x32@2x.png'
 import { useSelector } from 'react-redux'
 import { StoreState } from '@renderer/store'
+import { useTranslation } from 'react-i18next'
 
 const Settings: React.FC = () => {
   const settings = useSelector((state: StoreState) => state.settings)
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('general')
   const handleTabClick = (tab: string): void => {
     setActiveTab(tab)
@@ -30,7 +32,7 @@ const Settings: React.FC = () => {
         <Box w="36%" p={20} className={classes.left}>
           <Stack gap={4}>
             <SettingsTab
-              title="通用"
+              title={t('setting_tab_general')}
               color="blue"
               icon={<IconSettings size={20} />}
               isActive={activeTab === 'general'}
@@ -51,7 +53,7 @@ const Settings: React.FC = () => {
               onClick={(): void => handleTabClick('security')}
             /> */}
             <SettingsTab
-              title="剪贴板"
+              title={t('setting_tab_clipboard')}
               color="pink"
               icon={<IconClipboard size={20} />}
               isActive={activeTab === 'clipboard'}
@@ -59,14 +61,14 @@ const Settings: React.FC = () => {
             />
             <Divider my="sm" />
             <SettingsTab
-              title="开发者"
+              title={t('setting_tab_dev')}
               color="yellow"
               icon={<IconCode size={20} />}
               isActive={activeTab === 'developer'}
               onClick={(): void => handleTabClick('developer')}
             />
             <SettingsTab
-              title="关于"
+              title={t('setting_tab_about')}
               color="indigo"
               icon={<Image src={aboutLogo} w={28} h={28} />}
               isActive={activeTab === 'about'}
@@ -78,7 +80,7 @@ const Settings: React.FC = () => {
         {settings && (
           <Box w="64%" px={20} py={30}>
             {activeTab === 'general' && <GeneralSettings settings={settings} />}
-            {activeTab === 'clipboard' && <ClipboardSettings />}
+            {activeTab === 'clipboard' && <ClipboardSettings settings={settings} />}
             {activeTab === 'about' && <AboutSettings />}
             {activeTab === 'developer' && <DeveloperSettings />}
           </Box>

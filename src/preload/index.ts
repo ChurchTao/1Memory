@@ -1,7 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { ControllerApi, EventTypes } from '../common/const/const'
-import { MemoryItemDetailVO, MemoryItemListVO, PageResult, SettingsBO } from '@common/bo'
+import {
+  ClipSetting,
+  MemoryItemDetailVO,
+  MemoryItemListVO,
+  PageResult,
+  SettingsBO
+} from '@common/bo'
 
 // Custom APIs for renderer
 const api = {
@@ -24,7 +30,11 @@ const api = {
     datkModeSet: (darkMode: string): void =>
       ipcRenderer.send(ControllerApi.DARK_MODE_SET, darkMode),
     languageSet: (language: string): void =>
-      ipcRenderer.send(ControllerApi.SETTINGS_LANGUAGE_SET, language)
+      ipcRenderer.send(ControllerApi.SETTINGS_LANGUAGE_SET, language),
+    autoLaunchSet: (autoLaunch: boolean): void =>
+      ipcRenderer.send(ControllerApi.SETTINGS_AUTO_LAUNCH_SET, autoLaunch),
+    clipboardSet: (payload: ClipSetting): void =>
+      ipcRenderer.send(ControllerApi.SETTINGS_CLIPBOARD_SET, payload)
   },
   clip: {
     getById: (id: string): Promise<MemoryItemDetailVO> =>

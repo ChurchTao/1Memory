@@ -36,10 +36,22 @@ export const resources = {
       settings_general_auto_launch: '开机时启动',
       settings_general_language: '语言',
       settings_general_theme: '主题',
+      settings_general_theme_light: '浅色',
+      settings_general_theme_dark: '深色',
+      settings_general_theme_system: '跟随系统',
       mime_types_text: '纯文本',
       mime_types_html: 'HTML',
       mime_types_image: '图片',
-      mime_types_rtf: '富文本'
+      mime_types_rtf: '富文本',
+      setting_tab_general: '通用',
+      setting_tab_clipboard: '剪贴板',
+      setting_tab_dev: '开发者',
+      setting_tab_about: '关于',
+      settings_clip_enableClipboardListener: '是否启用剪贴板监听',
+      settings_clip_maxRecords: '最大记录数',
+      settings_clip_maxDays: '最大保存天数',
+      settings_clip_copyNotification: '复制通知',
+      settings_clip_shortcut: '快捷键'
     }
   },
   en: {
@@ -79,10 +91,22 @@ export const resources = {
       settings_general_auto_launch: 'Launch on startup',
       settings_general_language: 'Language',
       settings_general_theme: 'Theme',
+      settings_general_theme_light: 'Light',
+      settings_general_theme_dark: 'Dark',
+      settings_general_theme_system: 'System',
       mime_types_text: 'Text',
       mime_types_html: 'HTML',
       mime_types_image: 'Image',
-      mime_types_rtf: 'Rich Text'
+      mime_types_rtf: 'Rich Text',
+      setting_tab_general: 'General',
+      setting_tab_clipboard: 'Clipboard',
+      setting_tab_dev: 'Developer',
+      setting_tab_about: 'About',
+      settings_clip_enableClipboardListener: 'Enable Clipboard Listener',
+      settings_clip_maxRecords: 'Max Records',
+      settings_clip_maxDays: 'Max Days',
+      settings_clip_copyNotification: 'Copy Notification',
+      settings_clip_shortcut: 'Shortcut'
     }
   }
 }

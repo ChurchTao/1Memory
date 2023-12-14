@@ -1,4 +1,4 @@
-import { ipcMain, nativeTheme } from 'electron'
+import { app, ipcMain, nativeTheme } from 'electron'
 import { ControllerApi } from '../../common/const/const'
 import { saveAllConfig } from '../service/settings-service'
 import i18n from 'i18next'
@@ -26,6 +26,20 @@ export function initSettingsController(): void {
     }
     i18n.changeLanguage(language)
     global.settings.general.language = language
+    saveAllConfig()
+  })
+
+  ipcMain.on(ControllerApi.SETTINGS_AUTO_LAUNCH_SET, (_event, autoLaunch) => {
+    app.setLoginItemSettings({
+      openAtLogin: autoLaunch
+    })
+    global.settings.general.autoLaunch = autoLaunch
+    saveAllConfig()
+  })
+
+  ipcMain.on(ControllerApi.SETTINGS_CLIPBOARD_SET, (_event, payload) => {
+    console.log('payload', payload)
+    global.settings.clip = payload
     saveAllConfig()
   })
 }

@@ -1,5 +1,11 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { MemoryItemDetailVO, MemoryItemListVO, PageResult, SettingsBO } from '@common/bo'
+import {
+  MemoryItemDetailVO,
+  MemoryItemListVO,
+  PageResult,
+  SettingsBO,
+  ClipSetting
+} from '@common/bo'
 
 declare global {
   interface Window {
@@ -13,9 +19,11 @@ declare global {
         setSize(name: string, width: number, height: number): void
       }
       settings: {
+        clipboardSet(payload: ClipSetting): void
         getAll(): Promise<SettingsBO>
         datkModeSet(darkMode: string): void
         languageSet(language: string): void
+        autoLaunchSet(autoLaunch: boolean): void
         onChange(callback: (event: SettingsBO) => void): void
       }
       clip: {

@@ -68,7 +68,9 @@ export enum ControllerApi {
   WIN_OPEN = 'win::open',
   SETTINGS_GET_ALL = 'settings::getAll',
   DARK_MODE_SET = 'darkMode::set',
-  SETTINGS_LANGUAGE_SET = 'settings::languageSet'
+  SETTINGS_LANGUAGE_SET = 'settings::languageSet',
+  SETTINGS_AUTO_LAUNCH_SET = 'settings::autoLaunchSet',
+  SETTINGS_CLIPBOARD_SET = 'settings::clipboardSet'
 }
 
 export enum CommonDataTitle {

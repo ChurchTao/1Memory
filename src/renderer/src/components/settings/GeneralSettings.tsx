@@ -16,7 +16,7 @@ import { IconMoon, IconSun } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { SettingsBO } from '@common/bo'
 import { useDispatch } from 'react-redux'
-import { updateLanguage, updateTheme } from '@renderer/store'
+import { updateAutoLaunch, updateLanguage, updateTheme } from '@renderer/store'
 
 interface GeneralSettingsProps {
   settings: SettingsBO | null
@@ -48,6 +48,7 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
 
   const handleOpenOnLoginChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setOpenOnLogin(event.target.checked)
+    dispatch(updateAutoLaunch(event.target.checked))
   }
 
   const handleLanguageChange = (event: string | null): void => {
@@ -94,7 +95,7 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
               label: (
                 <Center>
                   <IconSun style={{ width: rem(16), height: rem(16) }} />
-                  <Box ml={10}>浅色</Box>
+                  <Box ml={10}>{t('settings_general_theme_light')}</Box>
                 </Center>
               )
             },
@@ -103,13 +104,13 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings }) => {
               label: (
                 <Center>
                   <IconMoon style={{ width: rem(16), height: rem(16) }} />
-                  <Box ml={10}>深色</Box>
+                  <Box ml={10}>{t('settings_general_theme_dark')}</Box>
                 </Center>
               )
             },
             {
               value: 'system',
-              label: '跟随系统'
+              label: t('settings_general_theme_system')
             }
           ]}
         />

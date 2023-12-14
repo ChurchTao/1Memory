@@ -21,10 +21,24 @@ const settingsSlice = createSlice({
     updateTheme(state, action) {
       state.general.theme = action.payload
       window.api.settings.datkModeSet(action.payload)
+    },
+    updateAutoLaunch(state, action) {
+      state.general.autoLaunch = action.payload
+      window.api.settings.autoLaunchSet(action.payload)
+    },
+    updateClipBoardSettings(state, action) {
+      state.clip = action.payload
+      window.api.settings.clipboardSet(action.payload)
     }
   }
 })
 
-export const { updateSettings, updateLanguage, updateTheme } = settingsSlice.actions
+export const {
+  updateSettings,
+  updateLanguage,
+  updateTheme,
+  updateAutoLaunch,
+  updateClipBoardSettings
+} = settingsSlice.actions
 
 export default settingsSlice.reducer

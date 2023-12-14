@@ -22,7 +22,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ title, icon, color, isActive,
         borderRadius: 8
       }}
       onClick={onClick}
-      className={isActive ? classes.item_active : classes.item}
+      className={classes.item}
+      data-active={isActive}
     >
       <Center
         w={32}
@@ -36,7 +37,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ title, icon, color, isActive,
       >
         {icon}
       </Center>
-      <Text className={isActive ? classes.text_active : classes.text} fz={'sm'}>
+      <Text className={classes.text} fz={'sm'}>
         {title}
       </Text>
     </Flex>
